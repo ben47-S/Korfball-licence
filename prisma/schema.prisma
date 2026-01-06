@@ -1,0 +1,166 @@
+// ==============================
+// GENERATOR & DATASOURCE
+// ==============================
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql" // OK pour dev / MVP
+}
+
+// ==============================
+// ENUMS
+// ==============================
+
+enum TypeLicence {
+  NOUVEAU
+  RENOUVELLEMENT
+}
+
+enum StatutLicence {
+  BROUILLON
+  SOUMISE
+  VALIDEE
+  REJETEE
+}
+
+enum StatutPaiement {
+  EN_ATTENTE
+  VALIDE
+  ECHOUE
+}
+
+enum Role {
+  ADMIN
+  AGENT
+}
+
+enum LienResponsable {
+  PERE
+  MERE
+  TUTEUR
+}
+
+// ==============================
+// MODELS
+// ==============================
+
+model User {
+  id        Int      @id @default(autoincrement())
+  nom       String
+  prenom    String
+  email     String   @unique
+  telephone String?
+  role      Role
+
+  createdAt DateTime @default(now())
+}
+
+model Joueur {
+  id              Int       @id @default(autoincrement())
+  nom             String
+  prenom          String
+  dateNaissance   DateTime
+  lieuNaissance   String?
+  nationalite     String?
+  sexe            String?   // M / F
+  photo           String?   // URL ou chemin
+  signature       String?   // URL ou chemin
+
+  responsables    Responsable[]
+  licences        Licence[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Responsable {
+  id        Int             @id @default(autoincrement())
+  nom       String
+  prenom    String
+  lien      LienResponsable
+
+  joueurId Int
+  joueur   Joueur          @relation(fields: [joueurId], references: [id], onDelete: Cascade)
+}
+
+model Club {
+  id        Int      @id @default(autoincrement())
+  nom       String
+  ville     String?
+  pays      String?
+
+  licencesActuelles   Licence[] @relation("ClubActuel")
+  licencesPrecedentes Licence[] @relation("ClubPrecedent")
+
+  createdAt DateTime @default(now())
+}
+
+model Saison {
+  id                Int      @id @default(autoincrement())
+  code              String   @unique  // ex: 2024-2025
+  debut             DateTime
+  fin               DateTime
+
+  // Période pour saisir les licences
+  inscriptionDebut  DateTime
+  inscriptionFin    DateTime
+
+  licences          Licence[]
+}
+
+model Licence {
+  id                Int           @id @default(autoincrement())
+
+  joueurId          Int
+  joueur            Joueur        @relation(fields: [joueurId], references: [id], onDelete: Cascade)
+
+  saisonId          Int
+  saison            Saison        @relation(fields: [saisonId], references: [id])
+
+  clubPrecedentId   Int?
+  clubPrecedent     Club?         @relation("ClubPrecedent", fields: [clubPrecedentId], references: [id])
+
+  clubActuelId      Int?
+  clubActuel        Club?         @relation("ClubActuel", fields: [clubActuelId], references: [id])
+
+  numeroLicence     Int?           @unique
+  type              TypeLicence
+  statut            StatutLicence  @default(BROUILLON)
+
+  paiement          Paiement?
+
+  dateValidation    DateTime?
+  commentaireAdmin  String?
+
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@unique([joueurId, saisonId])
+}
+
+model Paiement {
+  id              Int            @id @default(autoincrement())
+
+  // --- CinetPay ---
+  provider        String         @default("CINETPAY")
+  transactionId   String         @unique   // ID retourné par CinetPay
+  reference       String         @unique   // référence interne
+  montant         Float
+  devise          String         @default("XOF")
+  statut          StatutPaiement @default(EN_ATTENTE)
+
+  // --- Relations ---
+  licenceId       Int            @unique
+  licence         Licence        @relation(fields: [licenceId], references: [id], onDelete: Cascade)
+
+  // --- Meta ---
+  paymentUrl      String?        // lien de paiement CinetPay
+  rawResponse     String?        // JSON string optionnel
+
+  createdAt       DateTime       @default(now())
+  paidAt          DateTime?
+}
