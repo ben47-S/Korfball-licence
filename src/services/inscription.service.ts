@@ -496,4 +496,160 @@ export class InscriptionService {
     };
   }
 
+  /**
+   * Modifier une inscription existante (REJETEE → EN_CORRECTION)
+   * Permet à l'utilisateur de corriger et resoumettre sa demande
+   */
+  static async modifierInscription(
+    licenceId: string,
+    data: InscriptionLicenceInput
+  ): Promise<{
+    licenceId: string;
+    joueurId: string;
+    numeroLicence: string | null;
+    emailSent: boolean;
+  }> {
+    // 1. Vérifications préliminaires AVANT la transaction (pour gagner du temps)
+    const licenceExistante = await prisma.licence.findUnique({
+      where: { id: licenceId },
+      select: {
+        id: true,
+        statut: true,
+        joueurId: true,
+        saisonId: true,
+      },
+    });
+
+    if (!licenceExistante) {
+      throw new Error('Licence introuvable');
+    }
+
+    if (licenceExistante.statut !== StatutLicence.REJETEE) {
+      throw new Error('Seules les licences rejetées peuvent être modifiées');
+    }
+
+    // 2. Vérifier que la saison est ouverte AVANT la transaction
+    const saison = await prisma.saison.findUnique({
+      where: { id: data.saisonId },
+      select: { inscriptionDebut: true, inscriptionFin: true, code: true },
+    });
+
+    if (!saison) {
+      throw new Error('Saison introuvable');
+    }
+
+    const maintenant = new Date();
+    if (maintenant < saison.inscriptionDebut) {
+      throw new Error(
+        `Les inscriptions pour la saison ${saison.code} ne sont pas encore ouvertes. ` +
+        `Ouverture prévue le ${formatDate(saison.inscriptionDebut)}`
+      );
+    }
+    if (maintenant > saison.inscriptionFin) {
+      throw new Error(
+        `Les inscriptions pour la saison ${saison.code} sont fermées depuis le ${formatDate(saison.inscriptionFin)}`
+      );
+    }
+
+    // 3. Effectuer les modifications en transaction (uniquement les écritures)
+    const result = await prisma.$transaction(
+      async (tx) => {
+        // 3.1. Mettre à jour les informations du joueur
+        const joueur = await tx.joueur.update({
+          where: { id: licenceExistante.joueurId },
+          data: {
+            nom: data.joueur.nom,
+            prenom: data.joueur.prenom,
+            email: data.joueur.email || null,
+            telephone: data.joueur.telephone,
+            dateNaissance: new Date(data.joueur.dateNaissance),
+            lieuNaissance: data.joueur.lieuNaissance,
+            nationalite: data.joueur.nationalite,
+            sexe: data.joueur.sexe,
+            photo: data.joueur.photo || null,
+            signature: data.joueur.signature || null,
+            pieceIdentite: data.joueur.pieceIdentite || null,
+            certificatMedical: data.joueur.certificatMedical || null,
+          },
+          select: {
+            id: true,
+            numeroLicence: true,
+            email: true,
+            nom: true,
+            prenom: true,
+          },
+        });
+
+        // 3.2. Mettre à jour les responsables (supprimer les anciens, créer les nouveaux)
+        await tx.responsable.deleteMany({
+          where: { joueurId: joueur.id },
+        });
+
+        if (data.responsables && data.responsables.length > 0) {
+          await tx.responsable.createMany({
+            data: data.responsables.map((resp) => ({
+              nom: resp.nom,
+              prenom: resp.prenom,
+              telephone: resp.telephone,
+              email: resp.email || null,
+              lien: resp.lien,
+              joueurId: joueur.id,
+            })),
+          });
+        }
+
+        // 3.3. Mettre à jour la licence (statut REJETEE → EN_CORRECTION)
+        await tx.licence.update({
+          where: { id: licenceId },
+          data: {
+            statut: StatutLicence.EN_CORRECTION,
+            type: data.type,
+            clubPrecedentId: data.clubPrecedentId || null,
+            clubActuelId: data.clubActuelId || null,
+            commentaireAdmin: null, // Effacer l'ancien commentaire de rejet
+          },
+        });
+
+        // Retourner les données nécessaires
+        return {
+          licenceId: licenceExistante.id,
+          joueurId: joueur.id,
+          numeroLicence: joueur.numeroLicence,
+          email: joueur.email,
+          nom: joueur.nom,
+          prenom: joueur.prenom,
+          saisonCode: saison.code,
+        };
+      },
+      {
+        maxWait: 10000, // Attendre max 10s pour obtenir le verrou
+        timeout: 30000, // Timeout de 30s pour la transaction
+      }
+    );
+
+    // 7. Envoyer l'email APRÈS la transaction (opération externe)
+    let emailSent = false;
+    if (result.email) {
+      try {
+        await sendInscriptionConfirmationEmail(
+          result.email,
+          result.nom,
+          result.prenom,
+          result.numeroLicence || 'En attente',
+          result.saisonCode
+        );
+        emailSent = true;
+      } catch (emailError) {
+        console.error('Erreur envoi email:', emailError);
+      }
+    }
+
+    return {
+      licenceId: result.licenceId,
+      joueurId: result.joueurId,
+      numeroLicence: result.numeroLicence,
+      emailSent,
+    };
+  }
+
 }

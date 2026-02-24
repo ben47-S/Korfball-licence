@@ -56,6 +56,18 @@ export default function ImageCapture({
         <p className="text-xs text-gray-500">{description}</p>
       )}
 
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleSelect(file);
+          e.target.value = '';
+        }}
+        className="hidden"
+      />
+
       {value ? (
         <div className="space-y-2">
           <img
@@ -63,38 +75,34 @@ export default function ImageCapture({
             alt={label}
             className="w-full max-h-64 object-contain border rounded"
           />
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => onChange('')}
-            className="w-full"
-          >
-            Supprimer l’image
-          </Button>
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => inputRef.current?.click()}
+              className="w-full"
+            >
+              Remplacer
+            </Button>
+            <Button
+              type="button"
+              variant="danger"
+              onClick={() => onChange('')}
+              className="w-full"
+            >
+              Supprimer
+            </Button>
+          </div>
         </div>
       ) : (
-        <>
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleSelect(file);
-              e.target.value = '';
-            }}
-            className="hidden"
-          />
-
-          <Button
-            type="button"
-            variant="secondary"
-            className="w-full"
-            onClick={() => inputRef.current?.click()}
-          >
-            Charger une image
-          </Button>
-        </>
+        <Button
+          type="button"
+          variant="secondary"
+          className="w-full"
+          onClick={() => inputRef.current?.click()}
+        >
+          Charger une image
+        </Button>
       )}
 
       {error && <p className="text-sm text-red-600">{error}</p>}

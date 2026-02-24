@@ -253,7 +253,7 @@ export default function StepCPage() {
                       className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                     >
                       <div>
-                        <p className="font-medium">
+                        <p className="font-medium text-gray-900">
                           {resp.prenom} {resp.nom} ({resp.lien})
                         </p>
                         {resp.telephone && (

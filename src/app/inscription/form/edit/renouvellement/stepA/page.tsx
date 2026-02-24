@@ -9,9 +9,9 @@ import Alert from '@/components/ui/Alert';
 import Card from '@/components/ui/Card';
 import { formatDate } from '@/lib/date-utils';
 import { formatTelephone } from '@/lib/utils';
-import { useFormData } from '../../hooks/useFormData';
-import StepIndicator from '../../components/StepIndicator';
-import type { Saison, Club } from '../../types';
+import { useFormData } from '../../../hooks/useFormData';
+import StepIndicator from '../../../components/StepIndicator';
+import type { Saison, Club } from '../../../types';
 
 interface LicencePrecedente {
   id: string;
@@ -70,6 +70,10 @@ export default function RenewStepAPage() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [licencePrecedente, setLicencePrecedente] = useState<LicencePrecedente | null>(null);
   const [formPreRempli, setFormPreRempli] = useState(false);
+  const [adminComment, setAdminComment] = useState('');
+  const [licenceId, setLicenceId] = useState('');
+  const [numeroLicence, setNumeroLicence] = useState('');
+  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -123,6 +127,30 @@ export default function RenewStepAPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Charger le commentaire admin, l'ID de licence et le numéro de licence depuis localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const comment = localStorage.getItem('admin_rejection_comment') || '';
+      const id = localStorage.getItem('editing_licence_id') || '';
+      const numero = localStorage.getItem('editing_numero_licence') || '';
+      setAdminComment(comment);
+      setLicenceId(id);
+      setNumeroLicence(numero);
+
+      // Si on a un licenceId, on est en mode édition
+      if (id) {
+        setIsEditMode(true);
+        // Marquer le formulaire comme déjà pré-rempli pour skip la vérification
+        setFormPreRempli(true);
+      }
+
+      // Vérifier qu'on a bien les données nécessaires
+      if (!id) {
+        router.push('/inscription/suivi');
+      }
+    }
+  }, [router]);
+
   // Détecter si on est sur mobile
   useEffect(() => {
     const checkMobile = () => {
@@ -134,6 +162,12 @@ export default function RenewStepAPage() {
   }, []);
 
   const handleVerifyCredentials = async () => {
+    // EN MODE ÉDITION : Skip la vérification car la licence précédente a déjà été validée
+    if (isEditMode) {
+      setError('');
+      return; // Ne rien faire, le formulaire est déjà pré-rempli
+    }
+
     // Validation des champs
     if (!numeroLicenceInput || numeroLicenceInput.trim().length === 0) {
       setError('Veuillez entrer votre numéro de licence');
@@ -275,13 +309,13 @@ export default function RenewStepAPage() {
     }
 
     setError('');
-    router.push('/inscription/form/reNew/stepB');
+    router.push('/inscription/form/edit/renouvellement/stepB');
   };
 
   return (
     <div className="min-h-screen bg-white relative py-12 px-4 sm:px-6 lg:px-8">
       {/* Logo en arrière-plan */}
-      <div 
+      <div
         className="fixed inset-0 opacity-20 md:opacity-10 pointer-events-none z-0"
         style={{
           backgroundImage: 'url(/images/korfball.png)',
@@ -299,7 +333,7 @@ export default function RenewStepAPage() {
         <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Renouvellement de Licence Korfball
+            Modifier mon renouvellement - Étape 1
             {saisonEnCours && (
               <span className="block text-2xl text-indigo-600 mt-2">
                 Saison {saisonEnCours.code}
@@ -310,6 +344,40 @@ export default function RenewStepAPage() {
             Renouvellement de licence
           </p>
         </div>
+
+        {numeroLicence && (
+          <div className="mb-6">
+            <Alert type="info" title="Modification en cours">
+              <div>
+                <p className="font-medium">
+                  Vous modifiez votre demande de renouvellement avec le matricule :
+                </p>
+                <p className="text-lg font-bold text-indigo-700 mt-2">
+                  {numeroLicence}
+                </p>
+                <p className="text-sm mt-2">
+                  Toutes les modifications seront appliquées à cette licence.
+                </p>
+              </div>
+            </Alert>
+          </div>
+        )}
+
+        {adminComment && (
+          <div className="mb-6">
+            <Alert type="warning" title="Votre demande a été rejetée">
+              <div>
+                <p className="font-medium mb-2">Raison du rejet :</p>
+                <p className="text-sm bg-white bg-opacity-50 p-3 rounded border border-yellow-300">
+                  {adminComment}
+                </p>
+                <p className="mt-2 text-sm">
+                  Veuillez corriger les informations ci-dessous et resoumettre votre demande.
+                </p>
+              </div>
+            </Alert>
+          </div>
+        )}
 
         {!loadingData && !saisonEnCours && (
           <div className="mb-6">
@@ -361,8 +429,8 @@ export default function RenewStepAPage() {
                 </div>
               )}
 
-              {/* Étape 1 : Vérification des informations */}
-              {!formPreRempli && (
+              {/* Étape 1 : Vérification des informations - UNIQUEMENT si pas en mode édition */}
+              {!isEditMode && !formPreRempli && (
                 <>
                   <div className="space-y-4">
                     <Input
@@ -405,24 +473,29 @@ export default function RenewStepAPage() {
                 </>
               )}
 
-              {/* Étape 2 : Formulaire pré-rempli après vérification */}
-              {formPreRempli && licencePrecedente && (
+              {/* Étape 2 : Formulaire pré-rempli après vérification OU en mode édition */}
+              {((formPreRempli && licencePrecedente) || (isEditMode && formPreRempli)) && (
                 <>
-                  <Alert type="success">
-                    <strong>Informations vérifiées !</strong>
-                    <br />
-                    Votre formulaire a été pré-rempli avec les données de votre licence précédente (saison {licencePrecedente.saison.code}).
-                    Vous pouvez modifier les informations si nécessaire.
-                  </Alert>
+                  {!isEditMode && licencePrecedente && (
+                    <Alert type="success">
+                      <strong>Informations vérifiées !</strong>
+                      <br />
+                      Votre formulaire a été pré-rempli avec les données de votre licence précédente (saison {licencePrecedente.saison.code}).
+                      Vous pouvez modifier les informations si nécessaire.
+                    </Alert>
+                  )}
 
-                  <Input
-                    label="Numéro de licence précédent"
-                    type="text"
-                    required
-                    value={formData.numeroLicencePrecedent}
-                    disabled
-                    helperText="Numéro de licence vérifié et validé"
-                  />
+                  {/* Afficher le numéro de licence précédent (vérifié ou pré-rempli) */}
+                  {formData.numeroLicencePrecedent && (
+                    <Input
+                      label="Numéro de licence précédent"
+                      type="text"
+                      required
+                      value={formData.numeroLicencePrecedent}
+                      disabled
+                      helperText={isEditMode ? "Numéro de licence utilisé pour ce renouvellement" : "Numéro de licence vérifié et validé"}
+                    />
+                  )}
 
                   <div className="space-y-3">
                     <label className="block text-sm font-medium text-gray-700 mb-3">
@@ -437,7 +510,10 @@ export default function RenewStepAPage() {
                           checked={aUnClubPrecedent === true}
                           onChange={() => {
                             setAUnClubPrecedent(true);
-                            updateFormData({ clubPrecedentId: licencePrecedente.clubPrecedent?.id || '' });
+                            // En mode édition, garder la valeur pré-remplie, sinon utiliser licencePrecedente
+                            if (!isEditMode && licencePrecedente) {
+                              updateFormData({ clubPrecedentId: licencePrecedente.clubPrecedent?.id || '' });
+                            }
                           }}
                           className="sr-only"
                         />

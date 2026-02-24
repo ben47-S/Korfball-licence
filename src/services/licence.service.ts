@@ -83,14 +83,19 @@ export class LicenceService {
       throw new Error('Licence introuvable');
     }
 
-    // 2. Vérifier que le joueur a un numéro de licence
+    // 2. Autoriser validation depuis SOUMISE ou EN_CORRECTION
+    if (licence.statut !== StatutLicence.SOUMISE && licence.statut !== StatutLicence.EN_CORRECTION) {
+      throw new Error('Seules les licences soumises ou en correction peuvent être validées');
+    }
+
+    // 3. Vérifier que le joueur a un numéro de licence
     // Pour les nouveaux joueurs, le numéro est assigné lors de la création
     // Pour les renouvellements, le joueur garde son numéro précédent
     if (!licence.joueur.numeroLicence) {
       throw new Error('Le joueur n\'a pas de numéro de licence. Le numéro devrait être assigné lors de la création de l\'inscription.');
     }
 
-    // 3. Transaction : valider la licence
+    // 4. Transaction : valider la licence
     return prisma.$transaction(async (tx) => {
       // Mettre à jour la licence et retourner avec le joueur (pour avoir le numéro de licence)
       return tx.licence.update({
@@ -120,6 +125,11 @@ export class LicenceService {
     licenceId: string,
     commentaireAdmin: string
   ) {
+    // Vérifier que le commentaire est valide
+    if (!commentaireAdmin || commentaireAdmin.trim().length < 3) {
+      throw new Error('Le commentaire de rejet doit contenir au moins 3 caractères');
+    }
+
     return prisma.licence.update({
       where: { id: licenceId },
       data: {

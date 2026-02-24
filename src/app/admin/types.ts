@@ -52,7 +52,7 @@ export interface Paiement {
 
 export interface Licence {
   id: string;
-  statut: 'BROUILLON' | 'SOUMISE' | 'VALIDEE' | 'REJETEE';
+  statut: 'BROUILLON' | 'SOUMISE' | 'EN_CORRECTION' | 'VALIDEE' | 'REJETEE';
   type: 'NOUVEAU' | 'RENOUVELLEMENT';
   dateValidation: string | null;
   commentaireAdmin: string | null;

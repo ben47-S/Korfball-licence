@@ -12,6 +12,7 @@ import { useFormData } from '../form/hooks/useFormData';
 function SuccesContent() {
   const searchParams = useSearchParams();
   const numeroLicence = searchParams.get('numeroLicence');
+  const isModified = searchParams.get('modified') === 'true';
   const [isMobile, setIsMobile] = useState(false);
   const { clearFormData } = useFormData();
 
@@ -59,18 +60,24 @@ function SuccesContent() {
         <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Inscription réussie !
+            {isModified ? 'Demande modifiée avec succès !' : 'Inscription réussie !'}
           </h1>
           <p className="text-gray-600">
-            Votre demande de licence a été enregistrée avec succès
+            {isModified
+              ? 'Votre demande a été resoumise et est en cours de traitement'
+              : 'Votre demande de licence a été enregistrée avec succès'
+            }
           </p>
         </div>
 
         {numeroLicence ? (
           <Card>
             <div className="space-y-6">
-              <Alert type="success" title="Votre inscription est confirmée">
-                Votre demande de licence a été soumise et est en cours de traitement.
+              <Alert type="success" title={isModified ? "Votre demande a été resoumise" : "Votre inscription est confirmée"}>
+                {isModified
+                  ? "Votre demande de licence a été modifiée et resoumise. Elle est maintenant en cours de traitement."
+                  : "Votre demande de licence a été soumise et est en cours de traitement."
+                }
                 {numeroLicence && (
                   <span className="block mt-2 font-semibold">
                     Votre numéro de licence : {numeroLicence}

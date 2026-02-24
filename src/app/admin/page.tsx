@@ -40,7 +40,7 @@ export default function AdminPage() {
 
   // États pour les licences
   const [licences, setLicences] = useState<Licence[]>([]);
-  const [filterStatut, setFilterStatut] = useState<'TOUS' | 'SOUMISE' | 'VALIDEE' | 'REJETEE'>('TOUS');
+  const [filterStatut, setFilterStatut] = useState<'TOUS' | 'SOUMISE' | 'EN_CORRECTION' | 'VALIDEE' | 'REJETEE'>('TOUS');
   const [filterSaison, setFilterSaison] = useState<'EN_COURS' | 'ARCHIVES' | 'TOUS' | string>('EN_COURS');
   const [selectedLicence, setSelectedLicence] = useState<Licence | null>(null);
   const [showValidateModal, setShowValidateModal] = useState(false);
@@ -419,6 +419,7 @@ export default function AdminPage() {
                   options={[
                     { value: 'TOUS', label: 'Toutes les licences' },
                     { value: 'SOUMISE', label: 'En attente (SOUMISE)' },
+                    { value: 'EN_CORRECTION', label: 'En correction' },
                     { value: 'VALIDEE', label: 'Validées' },
                     { value: 'REJETEE', label: 'Rejetées' },
                   ]}
@@ -483,6 +484,8 @@ export default function AdminPage() {
                           className={`px-3 py-1 rounded-full text-xs font-medium ${
                             licence.statut === 'SOUMISE'
                               ? 'bg-yellow-100 text-yellow-800'
+                              : licence.statut === 'EN_CORRECTION'
+                              ? 'bg-orange-100 text-orange-800'
                               : licence.statut === 'VALIDEE'
                               ? 'bg-green-100 text-green-800'
                               : licence.statut === 'REJETEE'
@@ -490,7 +493,7 @@ export default function AdminPage() {
                               : 'bg-gray-100 text-gray-800'
                           }`}
                         >
-                          {licence.statut}
+                          {licence.statut === 'EN_CORRECTION' ? 'En correction' : licence.statut}
                         </span>
                       </div>
 
@@ -666,7 +669,7 @@ export default function AdminPage() {
                         </div>
                       )}
 
-                      {licence.statut === 'SOUMISE' && (
+                      {(licence.statut === 'SOUMISE' || licence.statut === 'EN_CORRECTION') && (
                         <div className="flex gap-2 mt-4">
                           <Button
                             onClick={() => {

@@ -9,18 +9,20 @@ import Alert from '@/components/ui/Alert';
 import Card from '@/components/ui/Card';
 import ImageCapture from '@/components/ui/ImageCapture';
 import { useRecaptcha } from '@/hooks/useRecaptcha';
-import { useFormData } from '../../hooks/useFormData';
-import StepIndicator from '../../components/StepIndicator';
-import type { ResponsableFormData } from '../../types';
+import { useFormData } from '../../../hooks/useFormData';
+import StepIndicator from '../../../components/StepIndicator';
+import type { ResponsableFormData } from '../../../types';
 import { formatTelephone, validateTelephone, formatTelephoneComplete } from '@/lib/utils';
 
-export default function RenewStepCPage() {
+export default function StepCPage() {
   const router = useRouter();
   const { isLoaded, executeRecaptcha } = useRecaptcha();
   const { formData, updateFormData, clearFormData, isHydrated } = useFormData();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isMobile, setIsMobile] = useState(false);
+  const [adminComment, setAdminComment] = useState('');
+  const [licenceId, setLicenceId] = useState('');
   const [responsableTemp, setResponsableTemp] = useState<ResponsableFormData>({
     nom: '',
     prenom: '',
@@ -45,6 +47,33 @@ export default function RenewStepCPage() {
   const age = calculateAge(formData.joueur.dateNaissance);
   const isMineur = age > 0 && age < 18;
 
+  // Charger le commentaire admin et l'ID de licence depuis localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const comment = localStorage.getItem('admin_rejection_comment') || '';
+      const id = localStorage.getItem('editing_licence_id') || '';
+      setAdminComment(comment);
+      setLicenceId(id);
+
+      // Vérifier qu'on a bien les données nécessaires
+      if (!id) {
+        router.push('/inscription/suivi');
+      }
+    }
+  }, [router]);
+
+  // Diagnostic : vérifier que les photos sont chargées
+  useEffect(() => {
+    if (isHydrated && formData.joueur) {
+      console.log('📸 Photos dans le formulaire stepC:', {
+        photo: formData.joueur.photo ? '✅ Présente (' + formData.joueur.photo.substring(0, 50) + '...)' : '❌ Manquante',
+        signature: formData.joueur.signature ? '✅ Présente (' + formData.joueur.signature.substring(0, 50) + '...)' : '❌ Manquante',
+        pieceIdentite: formData.joueur.pieceIdentite ? '✅ Présente (' + formData.joueur.pieceIdentite.substring(0, 50) + '...)' : '❌ Manquante',
+        certificatMedical: formData.joueur.certificatMedical ? '✅ Présente (' + formData.joueur.certificatMedical.substring(0, 50) + '...)' : '❌ Manquante',
+      });
+    }
+  }, [isHydrated, formData.joueur]);
+
   // Détecter si on est sur mobile
   useEffect(() => {
     const checkMobile = () => {
@@ -62,15 +91,11 @@ export default function RenewStepCPage() {
     if (!isHydrated || isLoading) return;
 
     if (!formData.type || !formData.saisonId) {
-      router.replace('/inscription/form/reNew/stepA');
-      return;
-    }
-    if (formData.type !== 'RENOUVELLEMENT') {
-      router.replace('/inscription/form/reNew/stepA');
+      router.replace('/inscription/form/edit/nouveau/stepA');
       return;
     }
     if (!formData.joueur.nom || !formData.joueur.prenom || !formData.joueur.dateNaissance || !formData.joueur.sexe) {
-      router.replace('/inscription/form/reNew/stepB');
+      router.replace('/inscription/form/edit/nouveau/stepB');
       return;
     }
   }, [isHydrated, isLoading, formData.type, formData.saisonId, formData.joueur.nom, formData.joueur.prenom, formData.joueur.dateNaissance, formData.joueur.sexe, router]);
@@ -103,7 +128,7 @@ export default function RenewStepCPage() {
 
     // Réinitialiser l'erreur si tout est valide
     setError('');
-    
+
     updateFormData({
       responsables: [...formData.responsables, responsableTemp],
     });
@@ -123,7 +148,7 @@ export default function RenewStepCPage() {
   };
 
   const handleBack = () => {
-    router.push('/inscription/form/reNew/stepB');
+    router.push('/inscription/form/edit/nouveau/stepB');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -131,9 +156,29 @@ export default function RenewStepCPage() {
     setIsLoading(true);
     setError('');
 
+    const licenceId = localStorage.getItem('editing_licence_id');
+    if (!licenceId) {
+      setError('Erreur : ID de licence manquant');
+      setIsLoading(false);
+      return;
+    }
+
     // Validation des responsables légaux pour les mineurs
     if (isMineur && formData.responsables.length === 0) {
       setError('⚠️ Attention : Pour un joueur mineur, vous devez obligatoirement ajouter au moins un responsable légal (père, mère ou tuteur) avant de valider l\'inscription. Veuillez remplir les informations du responsable et cliquer sur "Ajouter ce responsable".');
+      setIsLoading(false);
+      return;
+    }
+
+    // Validation des documents obligatoires pour nouvelle licence
+    if (!formData.joueur.pieceIdentite || formData.joueur.pieceIdentite.trim() === '') {
+      setError('La pièce d\'identité est obligatoire pour une nouvelle licence');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!formData.joueur.certificatMedical || formData.joueur.certificatMedical.trim() === '') {
+      setError('Le certificat médical est obligatoire pour une nouvelle licence');
       setIsLoading(false);
       return;
     }
@@ -145,18 +190,19 @@ export default function RenewStepCPage() {
 
       // Formater les téléphones au format complet +225XXXXXXXXXX avant l'envoi
       const payload = {
+        licenceId,
         ...formData,
         joueur: {
           ...formData.joueur,
           telephone: formatTelephoneComplete(formData.joueur.telephone),
         },
-        responsables: formData.responsables.length > 0 
+        responsables: formData.responsables.length > 0
           ? formData.responsables.map(resp => ({
               ...resp,
               telephone: formatTelephoneComplete(resp.telephone),
             }))
           : undefined,
-        numeroLicencePrecedent: formData.numeroLicencePrecedent,
+        numeroLicencePrecedent: formData.type === 'RENOUVELLEMENT' ? formData.numeroLicencePrecedent : undefined,
         clubPrecedentId: formData.clubPrecedentId || undefined,
         clubActuelId: formData.clubActuelId || undefined,
       };
@@ -169,8 +215,8 @@ export default function RenewStepCPage() {
         headers['x-recaptcha-token'] = recaptchaToken;
       }
 
-      const response = await fetch('/api/inscriptions', {
-        method: 'POST',
+      const response = await fetch('/api/inscriptions/update', {
+        method: 'PUT',
         headers,
         body: JSON.stringify(payload),
       });
@@ -181,12 +227,13 @@ export default function RenewStepCPage() {
         throw new Error(data.message || 'Erreur lors de l\'inscription');
       }
 
-      // Rediriger vers la page de succès
-      // NE PAS nettoyer les données ici pour éviter que le useEffect redéclenche une redirection
-      // La page de succès se chargera de nettoyer les données
-      const params = new URLSearchParams();
-      if (data.numeroLicence) params.append('numeroLicence', data.numeroLicence);
-      router.push(`/inscription/succes?${params.toString()}`);
+      // Nettoyer les données et rediriger vers la page de succès
+      clearFormData();
+      localStorage.removeItem('editing_licence_id');
+      localStorage.removeItem('admin_rejection_comment');
+      localStorage.removeItem('editing_numero_licence');
+
+      router.push(`/inscription/succes?numeroLicence=${data.numeroLicence}&modified=true`);
     } catch (err: unknown) {
       const error = err as Error;
       setError(error.message || 'Une erreur est survenue');
@@ -197,7 +244,7 @@ export default function RenewStepCPage() {
   return (
     <div className="min-h-screen bg-white relative py-12 px-4 sm:px-6 lg:px-8">
       {/* Logo en arrière-plan */}
-      <div 
+      <div
         className="fixed inset-0 opacity-20 md:opacity-10 pointer-events-none z-0"
         style={{
           backgroundImage: 'url(/images/korfball.png)',
@@ -215,9 +262,25 @@ export default function RenewStepCPage() {
         <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Renouvellement de Licence Korfball
+            Modifier ma demande - Étape 3
           </h1>
         </div>
+
+        {adminComment && (
+          <div className="mb-6">
+            <Alert type="warning" title="Votre demande a été rejetée">
+              <div>
+                <p className="font-medium mb-2">Raison du rejet :</p>
+                <p className="text-sm bg-white bg-opacity-50 p-3 rounded border border-yellow-300">
+                  {adminComment}
+                </p>
+                <p className="mt-2 text-sm">
+                  Veuillez corriger les informations ci-dessous et resoumettre votre demande.
+                </p>
+              </div>
+            </Alert>
+          </div>
+        )}
 
         <StepIndicator currentStep="stepC" />
 
@@ -347,7 +410,7 @@ export default function RenewStepCPage() {
               {/* Photo d'identité et signature */}
               <div className="border-t pt-6 mt-6 space-y-6">
                 <h3 className="font-medium text-gray-900 text-lg">
-                  Documents (optionnels)
+                  Documents
                 </h3>
 
                 <ImageCapture
@@ -371,6 +434,32 @@ export default function RenewStepCPage() {
                   }}
                   description="Le joueur doit signer sur une feuille de papier, puis prendre une photo de cette signature avec son téléphone."
                 />
+
+                <ImageCapture
+                  label="Pièce d'identité"
+                  required={true}
+                  value={formData.joueur.pieceIdentite}
+                  onChange={(base64) => {
+                    updateFormData({
+                      joueur: { ...formData.joueur, pieceIdentite: base64 },
+                    });
+                  }}
+                  description="Uploadez une copie claire de votre pièce d'identité (passeport, carte d'identité nationale, permis de conduire, etc.)"
+                  maxSizeMB={10}
+                />
+
+                <ImageCapture
+                  label="Certificat médical de non contre-indication"
+                  required={true}
+                  value={formData.joueur.certificatMedical}
+                  onChange={(base64) => {
+                    updateFormData({
+                      joueur: { ...formData.joueur, certificatMedical: base64 },
+                    });
+                  }}
+                  description="Uploadez votre certificat médical attestant l'absence de contre-indication à la pratique du korfball"
+                  maxSizeMB={10}
+                />
               </div>
 
               <div className="flex justify-between pt-4 border-t">
@@ -378,7 +467,7 @@ export default function RenewStepCPage() {
                   ← Retour
                 </Button>
                 <Button type="submit" isLoading={isLoading}>
-                  Valider le renouvellement
+                  Valider l'inscription
                 </Button>
               </div>
             </div>
@@ -414,4 +503,3 @@ export default function RenewStepCPage() {
     </div>
   );
 }
-

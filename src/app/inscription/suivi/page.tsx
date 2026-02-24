@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import Link from 'next/link';
 import Alert from '@/components/ui/Alert';
@@ -23,34 +23,53 @@ interface Paiement {
 interface Licence {
   id: string;
   type: string;
-  statut: string;
+  statut: 'BROUILLON' | 'SOUMISE' | 'EN_CORRECTION' | 'VALIDEE' | 'REJETEE';
   numeroLicence: string | null;
   dateValidation: string | null;
   commentaireAdmin: string | null;
   createdAt: string;
   joueur: {
+    id: string;
     nom: string;
     prenom: string;
     email: string | null;
     telephone: string;
     dateNaissance: string;
+    lieuNaissance: string;
+    nationalite: string;
+    sexe: string;
+    numeroLicence: string | null;
     photo: string | null;
     signature: string | null;
     pieceIdentite: string | null;
     certificatMedical: string | null;
+    responsables: Array<{
+      nom: string;
+      prenom: string;
+      telephone: string;
+      email: string | null;
+      lien: string;
+    }>;
   };
   saison: {
+    id: string;
     code: string;
   };
   clubActuel: {
+    id: string;
     nom: string;
     ville: string | null;
+  } | null;
+  clubPrecedent: {
+    id: string;
+    nom: string;
   } | null;
   paiement: Paiement | null;
 }
 
 function SuiviContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [numeroLicence, setNumeroLicence] = useState('');
   const [dateNaissance, setDateNaissance] = useState('');
   const [telephone, setTelephone] = useState('');
@@ -119,6 +138,7 @@ function SuiviContent() {
     const badges = {
       BROUILLON: { bg: 'bg-gray-100', text: 'text-gray-800', label: 'Brouillon' },
       SOUMISE: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'En cours de traitement' },
+      EN_CORRECTION: { bg: 'bg-orange-100', text: 'text-orange-800', label: 'En correction' },
       VALIDEE: { bg: 'bg-green-100', text: 'text-green-800', label: 'Validée' },
       REJETEE: { bg: 'bg-red-100', text: 'text-red-800', label: 'Rejetée' },
     };
@@ -130,6 +150,62 @@ function SuiviContent() {
         {config.label}
       </span>
     );
+  };
+
+  const handleEditRejectedLicence = (licence: Licence) => {
+    // Normaliser le téléphone : enlever +225 et les espaces pour avoir uniquement les 10 chiffres
+    const normaliserTelephone = (tel: string) => {
+      return tel.replace(/^\+225/, '').replace(/\s/g, '');
+    };
+
+    // Construire les données du formulaire à partir de la licence
+    const formDataToEdit = {
+      type: licence.type,
+      saisonId: licence.saison.id || '',
+      joueur: {
+        nom: licence.joueur.nom,
+        prenom: licence.joueur.prenom,
+        email: licence.joueur.email || '',
+        telephone: normaliserTelephone(licence.joueur.telephone),
+        dateNaissance: new Date(licence.joueur.dateNaissance).toISOString().split('T')[0],
+        lieuNaissance: licence.joueur.lieuNaissance || '',
+        nationalite: licence.joueur.nationalite || 'Ivoirienne',
+        sexe: licence.joueur.sexe || '',
+        photo: licence.joueur.photo || '',
+        signature: licence.joueur.signature || '',
+        pieceIdentite: licence.joueur.pieceIdentite || '',
+        certificatMedical: licence.joueur.certificatMedical || '',
+      },
+      responsables: licence.joueur.responsables?.map(resp => ({
+        nom: resp.nom,
+        prenom: resp.prenom,
+        telephone: normaliserTelephone(resp.telephone || ''),
+        email: resp.email || '',
+        lien: resp.lien,
+      })) || [],
+      numeroLicencePrecedent: licence.type === 'RENOUVELLEMENT' ? (licence.joueur.numeroLicence || '') : '',
+      clubPrecedentId: licence.clubPrecedent?.id || '',
+      clubActuelId: licence.clubActuel?.id || '',
+    };
+
+    // Log pour diagnostic des photos
+    console.log('📸 Photos chargées pour édition:', {
+      photo: licence.joueur.photo ? '✅ Présente' : '❌ Manquante',
+      signature: licence.joueur.signature ? '✅ Présente' : '❌ Manquante',
+      pieceIdentite: licence.joueur.pieceIdentite ? '✅ Présente' : '❌ Manquante',
+      certificatMedical: licence.joueur.certificatMedical ? '✅ Présente' : '❌ Manquante',
+    });
+
+    // Stocker dans localStorage pour pré-remplir le formulaire
+    localStorage.setItem('inscription_form_data', JSON.stringify(formDataToEdit));
+
+    // Stocker aussi l'ID de la licence à modifier, le commentaire admin et le numéro de licence
+    localStorage.setItem('editing_licence_id', licence.id);
+    localStorage.setItem('admin_rejection_comment', licence.commentaireAdmin || '');
+    localStorage.setItem('editing_numero_licence', licence.joueur.numeroLicence || '');
+
+    // Rediriger vers le formulaire d'édition
+    router.push(`/inscription/form/edit/${licence.type.toLowerCase()}/stepA`);
   };
 
   return (
@@ -416,16 +492,28 @@ function SuiviContent() {
               )}
 
               {licence.statut === 'REJETEE' && (
-                <Alert type="error" title="Licence rejetée">
-                  {licence.commentaireAdmin ? (
-                    <div>
-                      <p className="font-medium">Raison du rejet :</p>
-                      <p className="mt-1">{licence.commentaireAdmin}</p>
-                    </div>
-                  ) : (
-                    <p>Votre demande de licence a été rejetée. Veuillez contacter votre club pour plus d'informations.</p>
-                  )}
-                </Alert>
+                <div>
+                  <Alert type="error" title="Licence rejetée">
+                    {licence.commentaireAdmin ? (
+                      <div>
+                        <p className="font-medium">Raison du rejet :</p>
+                        <p className="mt-1">{licence.commentaireAdmin}</p>
+                      </div>
+                    ) : (
+                      <p>Votre demande de licence a été rejetée. Veuillez contacter votre club pour plus d'informations.</p>
+                    )}
+                  </Alert>
+
+                  {/* Bouton de modification */}
+                  <div className="mt-4">
+                    <Button
+                      onClick={() => handleEditRejectedLicence(licence)}
+                      className="w-full"
+                    >
+                      Modifier ma demande et resoumettre
+                    </Button>
+                  </div>
+                </div>
               )}
 
               {/* Statut de paiement */}

@@ -20,6 +20,7 @@ export type TypeLicence = (typeof TypeLicence)[keyof typeof TypeLicence]
 export const StatutLicence = {
   BROUILLON: 'BROUILLON',
   SOUMISE: 'SOUMISE',
+  EN_CORRECTION: 'EN_CORRECTION',
   VALIDEE: 'VALIDEE',
   REJETEE: 'REJETEE'
 } as const

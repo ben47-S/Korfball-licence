@@ -8,9 +8,9 @@ import Button from '@/components/ui/Button';
 import Alert from '@/components/ui/Alert';
 import Card from '@/components/ui/Card';
 import { formatDate } from '@/lib/date-utils';
-import { useFormData } from '../../hooks/useFormData';
-import StepIndicator from '../../components/StepIndicator';
-import type { Saison, Club } from '../../types';
+import { useFormData } from '../../../hooks/useFormData';
+import StepIndicator from '../../../components/StepIndicator';
+import type { Saison, Club } from '../../../types';
 
 export default function StepAPage() {
   const router = useRouter();
@@ -21,6 +21,9 @@ export default function StepAPage() {
   const [loadingData, setLoadingData] = useState(true);
   const [aUnClubPrecedent, setAUnClubPrecedent] = useState<boolean | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [adminComment, setAdminComment] = useState('');
+  const [licenceId, setLicenceId] = useState('');
+  const [numeroLicence, setNumeroLicence] = useState('');
 
   // Détecter si on est sur mobile
   useEffect(() => {
@@ -31,6 +34,23 @@ export default function StepAPage() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Charger le commentaire admin, l'ID de licence et le numéro de licence depuis localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const comment = localStorage.getItem('admin_rejection_comment') || '';
+      const id = localStorage.getItem('editing_licence_id') || '';
+      const numero = localStorage.getItem('editing_numero_licence') || '';
+      setAdminComment(comment);
+      setLicenceId(id);
+      setNumeroLicence(numero);
+
+      // Vérifier qu'on a bien les données nécessaires
+      if (!id) {
+        router.push('/inscription/suivi');
+      }
+    }
+  }, [router]);
 
   // Réinitialiser l'état du club précédent et s'assurer que le type est NOUVEAU
   useEffect(() => {
@@ -142,14 +162,14 @@ export default function StepAPage() {
     setError('');
     // Utiliser un petit délai pour s'assurer que localStorage est synchronisé
     setTimeout(() => {
-      router.replace('/inscription/form/new/stepB');
+      router.replace('/inscription/form/edit/nouveau/stepB');
     }, 100);
   };
 
   return (
     <div className="min-h-screen bg-white relative py-12 px-4 sm:px-6 lg:px-8">
       {/* Logo en arrière-plan */}
-      <div 
+      <div
         className="fixed inset-0 opacity-20 md:opacity-10 pointer-events-none z-0"
         style={{
           backgroundImage: 'url(/images/korfball.png)',
@@ -167,7 +187,7 @@ export default function StepAPage() {
         <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Inscription Licence Korfball
+            Modifier ma demande - Étape 1
             {saisonEnCours && (
               <span className="block text-2xl text-indigo-600 mt-2">
                 Saison {saisonEnCours.code}
@@ -178,6 +198,40 @@ export default function StepAPage() {
             Nouveau Joueur
           </p>
         </div>
+
+        {numeroLicence && (
+          <div className="mb-6">
+            <Alert type="info" title="Modification en cours">
+              <div>
+                <p className="font-medium">
+                  Vous modifiez votre demande de licence avec le matricule :
+                </p>
+                <p className="text-lg font-bold text-indigo-700 mt-2">
+                  {numeroLicence}
+                </p>
+                <p className="text-sm mt-2">
+                  Toutes les modifications seront appliquées à cette licence.
+                </p>
+              </div>
+            </Alert>
+          </div>
+        )}
+
+        {adminComment && (
+          <div className="mb-6">
+            <Alert type="warning" title="Votre demande a été rejetée">
+              <div>
+                <p className="font-medium mb-2">Raison du rejet :</p>
+                <p className="text-sm bg-white bg-opacity-50 p-3 rounded border border-yellow-300">
+                  {adminComment}
+                </p>
+                <p className="mt-2 text-sm">
+                  Veuillez corriger les informations ci-dessous et resoumettre votre demande.
+                </p>
+              </div>
+            </Alert>
+          </div>
+        )}
 
         {!loadingData && !saisonEnCours && (
           <div className="mb-6">
@@ -339,4 +393,3 @@ export default function StepAPage() {
     </div>
   );
 }
-

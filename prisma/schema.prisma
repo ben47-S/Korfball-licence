@@ -23,6 +23,7 @@ enum TypeLicence {
 enum StatutLicence {
   BROUILLON
   SOUMISE
+  EN_CORRECTION
   VALIDEE
   REJETEE
 }
