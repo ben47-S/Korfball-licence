@@ -20,37 +20,16 @@ export type LicenceModel = runtime.Types.Result.DefaultSelection<Prisma.$Licence
 
 export type AggregateLicence = {
   _count: LicenceCountAggregateOutputType | null
-  _avg: LicenceAvgAggregateOutputType | null
-  _sum: LicenceSumAggregateOutputType | null
   _min: LicenceMinAggregateOutputType | null
   _max: LicenceMaxAggregateOutputType | null
 }
 
-export type LicenceAvgAggregateOutputType = {
-  id: number | null
-  joueurId: number | null
-  saisonId: number | null
-  clubPrecedentId: number | null
-  clubActuelId: number | null
-  numeroLicence: number | null
-}
-
-export type LicenceSumAggregateOutputType = {
-  id: number | null
-  joueurId: number | null
-  saisonId: number | null
-  clubPrecedentId: number | null
-  clubActuelId: number | null
-  numeroLicence: number | null
-}
-
 export type LicenceMinAggregateOutputType = {
-  id: number | null
-  joueurId: number | null
-  saisonId: number | null
-  clubPrecedentId: number | null
-  clubActuelId: number | null
-  numeroLicence: number | null
+  id: string | null
+  joueurId: string | null
+  saisonId: string | null
+  clubPrecedentId: string | null
+  clubActuelId: string | null
   type: $Enums.TypeLicence | null
   statut: $Enums.StatutLicence | null
   dateValidation: Date | null
@@ -60,12 +39,11 @@ export type LicenceMinAggregateOutputType = {
 }
 
 export type LicenceMaxAggregateOutputType = {
-  id: number | null
-  joueurId: number | null
-  saisonId: number | null
-  clubPrecedentId: number | null
-  clubActuelId: number | null
-  numeroLicence: number | null
+  id: string | null
+  joueurId: string | null
+  saisonId: string | null
+  clubPrecedentId: string | null
+  clubActuelId: string | null
   type: $Enums.TypeLicence | null
   statut: $Enums.StatutLicence | null
   dateValidation: Date | null
@@ -80,7 +58,6 @@ export type LicenceCountAggregateOutputType = {
   saisonId: number
   clubPrecedentId: number
   clubActuelId: number
-  numeroLicence: number
   type: number
   statut: number
   dateValidation: number
@@ -91,31 +68,12 @@ export type LicenceCountAggregateOutputType = {
 }
 
 
-export type LicenceAvgAggregateInputType = {
-  id?: true
-  joueurId?: true
-  saisonId?: true
-  clubPrecedentId?: true
-  clubActuelId?: true
-  numeroLicence?: true
-}
-
-export type LicenceSumAggregateInputType = {
-  id?: true
-  joueurId?: true
-  saisonId?: true
-  clubPrecedentId?: true
-  clubActuelId?: true
-  numeroLicence?: true
-}
-
 export type LicenceMinAggregateInputType = {
   id?: true
   joueurId?: true
   saisonId?: true
   clubPrecedentId?: true
   clubActuelId?: true
-  numeroLicence?: true
   type?: true
   statut?: true
   dateValidation?: true
@@ -130,7 +88,6 @@ export type LicenceMaxAggregateInputType = {
   saisonId?: true
   clubPrecedentId?: true
   clubActuelId?: true
-  numeroLicence?: true
   type?: true
   statut?: true
   dateValidation?: true
@@ -145,7 +102,6 @@ export type LicenceCountAggregateInputType = {
   saisonId?: true
   clubPrecedentId?: true
   clubActuelId?: true
-  numeroLicence?: true
   type?: true
   statut?: true
   dateValidation?: true
@@ -193,18 +149,6 @@ export type LicenceAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: LicenceAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: LicenceSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: LicenceMinAggregateInputType
@@ -235,19 +179,16 @@ export type LicenceGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: LicenceCountAggregateInputType | true
-  _avg?: LicenceAvgAggregateInputType
-  _sum?: LicenceSumAggregateInputType
   _min?: LicenceMinAggregateInputType
   _max?: LicenceMaxAggregateInputType
 }
 
 export type LicenceGroupByOutputType = {
-  id: number
-  joueurId: number
-  saisonId: number
-  clubPrecedentId: number | null
-  clubActuelId: number | null
-  numeroLicence: number | null
+  id: string
+  joueurId: string
+  saisonId: string
+  clubPrecedentId: string | null
+  clubActuelId: string | null
   type: $Enums.TypeLicence
   statut: $Enums.StatutLicence
   dateValidation: Date | null
@@ -255,8 +196,6 @@ export type LicenceGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   _count: LicenceCountAggregateOutputType | null
-  _avg: LicenceAvgAggregateOutputType | null
-  _sum: LicenceSumAggregateOutputType | null
   _min: LicenceMinAggregateOutputType | null
   _max: LicenceMaxAggregateOutputType | null
 }
@@ -280,12 +219,11 @@ export type LicenceWhereInput = {
   AND?: Prisma.LicenceWhereInput | Prisma.LicenceWhereInput[]
   OR?: Prisma.LicenceWhereInput[]
   NOT?: Prisma.LicenceWhereInput | Prisma.LicenceWhereInput[]
-  id?: Prisma.IntFilter<"Licence"> | number
-  joueurId?: Prisma.IntFilter<"Licence"> | number
-  saisonId?: Prisma.IntFilter<"Licence"> | number
-  clubPrecedentId?: Prisma.IntNullableFilter<"Licence"> | number | null
-  clubActuelId?: Prisma.IntNullableFilter<"Licence"> | number | null
-  numeroLicence?: Prisma.IntNullableFilter<"Licence"> | number | null
+  id?: Prisma.UuidFilter<"Licence"> | string
+  joueurId?: Prisma.UuidFilter<"Licence"> | string
+  saisonId?: Prisma.UuidFilter<"Licence"> | string
+  clubPrecedentId?: Prisma.UuidNullableFilter<"Licence"> | string | null
+  clubActuelId?: Prisma.UuidNullableFilter<"Licence"> | string | null
   type?: Prisma.EnumTypeLicenceFilter<"Licence"> | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFilter<"Licence"> | $Enums.StatutLicence
   dateValidation?: Prisma.DateTimeNullableFilter<"Licence"> | Date | string | null
@@ -305,7 +243,6 @@ export type LicenceOrderByWithRelationInput = {
   saisonId?: Prisma.SortOrder
   clubPrecedentId?: Prisma.SortOrderInput | Prisma.SortOrder
   clubActuelId?: Prisma.SortOrderInput | Prisma.SortOrder
-  numeroLicence?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   dateValidation?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -320,16 +257,15 @@ export type LicenceOrderByWithRelationInput = {
 }
 
 export type LicenceWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
-  numeroLicence?: number
+  id?: string
   joueurId_saisonId?: Prisma.LicenceJoueurIdSaisonIdCompoundUniqueInput
   AND?: Prisma.LicenceWhereInput | Prisma.LicenceWhereInput[]
   OR?: Prisma.LicenceWhereInput[]
   NOT?: Prisma.LicenceWhereInput | Prisma.LicenceWhereInput[]
-  joueurId?: Prisma.IntFilter<"Licence"> | number
-  saisonId?: Prisma.IntFilter<"Licence"> | number
-  clubPrecedentId?: Prisma.IntNullableFilter<"Licence"> | number | null
-  clubActuelId?: Prisma.IntNullableFilter<"Licence"> | number | null
+  joueurId?: Prisma.UuidFilter<"Licence"> | string
+  saisonId?: Prisma.UuidFilter<"Licence"> | string
+  clubPrecedentId?: Prisma.UuidNullableFilter<"Licence"> | string | null
+  clubActuelId?: Prisma.UuidNullableFilter<"Licence"> | string | null
   type?: Prisma.EnumTypeLicenceFilter<"Licence"> | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFilter<"Licence"> | $Enums.StatutLicence
   dateValidation?: Prisma.DateTimeNullableFilter<"Licence"> | Date | string | null
@@ -341,7 +277,7 @@ export type LicenceWhereUniqueInput = Prisma.AtLeast<{
   clubPrecedent?: Prisma.XOR<Prisma.ClubNullableScalarRelationFilter, Prisma.ClubWhereInput> | null
   clubActuel?: Prisma.XOR<Prisma.ClubNullableScalarRelationFilter, Prisma.ClubWhereInput> | null
   paiement?: Prisma.XOR<Prisma.PaiementNullableScalarRelationFilter, Prisma.PaiementWhereInput> | null
-}, "id" | "numeroLicence" | "joueurId_saisonId">
+}, "id" | "joueurId_saisonId">
 
 export type LicenceOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -349,7 +285,6 @@ export type LicenceOrderByWithAggregationInput = {
   saisonId?: Prisma.SortOrder
   clubPrecedentId?: Prisma.SortOrderInput | Prisma.SortOrder
   clubActuelId?: Prisma.SortOrderInput | Prisma.SortOrder
-  numeroLicence?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   dateValidation?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -357,22 +292,19 @@ export type LicenceOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.LicenceCountOrderByAggregateInput
-  _avg?: Prisma.LicenceAvgOrderByAggregateInput
   _max?: Prisma.LicenceMaxOrderByAggregateInput
   _min?: Prisma.LicenceMinOrderByAggregateInput
-  _sum?: Prisma.LicenceSumOrderByAggregateInput
 }
 
 export type LicenceScalarWhereWithAggregatesInput = {
   AND?: Prisma.LicenceScalarWhereWithAggregatesInput | Prisma.LicenceScalarWhereWithAggregatesInput[]
   OR?: Prisma.LicenceScalarWhereWithAggregatesInput[]
   NOT?: Prisma.LicenceScalarWhereWithAggregatesInput | Prisma.LicenceScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"Licence"> | number
-  joueurId?: Prisma.IntWithAggregatesFilter<"Licence"> | number
-  saisonId?: Prisma.IntWithAggregatesFilter<"Licence"> | number
-  clubPrecedentId?: Prisma.IntNullableWithAggregatesFilter<"Licence"> | number | null
-  clubActuelId?: Prisma.IntNullableWithAggregatesFilter<"Licence"> | number | null
-  numeroLicence?: Prisma.IntNullableWithAggregatesFilter<"Licence"> | number | null
+  id?: Prisma.UuidWithAggregatesFilter<"Licence"> | string
+  joueurId?: Prisma.UuidWithAggregatesFilter<"Licence"> | string
+  saisonId?: Prisma.UuidWithAggregatesFilter<"Licence"> | string
+  clubPrecedentId?: Prisma.UuidNullableWithAggregatesFilter<"Licence"> | string | null
+  clubActuelId?: Prisma.UuidNullableWithAggregatesFilter<"Licence"> | string | null
   type?: Prisma.EnumTypeLicenceWithAggregatesFilter<"Licence"> | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceWithAggregatesFilter<"Licence"> | $Enums.StatutLicence
   dateValidation?: Prisma.DateTimeNullableWithAggregatesFilter<"Licence"> | Date | string | null
@@ -382,7 +314,7 @@ export type LicenceScalarWhereWithAggregatesInput = {
 }
 
 export type LicenceCreateInput = {
-  numeroLicence?: number | null
+  id?: string
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -397,12 +329,11 @@ export type LicenceCreateInput = {
 }
 
 export type LicenceUncheckedCreateInput = {
-  id?: number
-  joueurId: number
-  saisonId: number
-  clubPrecedentId?: number | null
-  clubActuelId?: number | null
-  numeroLicence?: number | null
+  id?: string
+  joueurId: string
+  saisonId: string
+  clubPrecedentId?: string | null
+  clubActuelId?: string | null
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -413,7 +344,7 @@ export type LicenceUncheckedCreateInput = {
 }
 
 export type LicenceUpdateInput = {
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -428,12 +359,11 @@ export type LicenceUpdateInput = {
 }
 
 export type LicenceUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  joueurId?: Prisma.IntFieldUpdateOperationsInput | number
-  saisonId?: Prisma.IntFieldUpdateOperationsInput | number
-  clubPrecedentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clubActuelId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  joueurId?: Prisma.StringFieldUpdateOperationsInput | string
+  saisonId?: Prisma.StringFieldUpdateOperationsInput | string
+  clubPrecedentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clubActuelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -444,12 +374,11 @@ export type LicenceUncheckedUpdateInput = {
 }
 
 export type LicenceCreateManyInput = {
-  id?: number
-  joueurId: number
-  saisonId: number
-  clubPrecedentId?: number | null
-  clubActuelId?: number | null
-  numeroLicence?: number | null
+  id?: string
+  joueurId: string
+  saisonId: string
+  clubPrecedentId?: string | null
+  clubActuelId?: string | null
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -459,7 +388,7 @@ export type LicenceCreateManyInput = {
 }
 
 export type LicenceUpdateManyMutationInput = {
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -469,12 +398,11 @@ export type LicenceUpdateManyMutationInput = {
 }
 
 export type LicenceUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  joueurId?: Prisma.IntFieldUpdateOperationsInput | number
-  saisonId?: Prisma.IntFieldUpdateOperationsInput | number
-  clubPrecedentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clubActuelId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  joueurId?: Prisma.StringFieldUpdateOperationsInput | string
+  saisonId?: Prisma.StringFieldUpdateOperationsInput | string
+  clubPrecedentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clubActuelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -494,8 +422,8 @@ export type LicenceOrderByRelationAggregateInput = {
 }
 
 export type LicenceJoueurIdSaisonIdCompoundUniqueInput = {
-  joueurId: number
-  saisonId: number
+  joueurId: string
+  saisonId: string
 }
 
 export type LicenceCountOrderByAggregateInput = {
@@ -504,7 +432,6 @@ export type LicenceCountOrderByAggregateInput = {
   saisonId?: Prisma.SortOrder
   clubPrecedentId?: Prisma.SortOrder
   clubActuelId?: Prisma.SortOrder
-  numeroLicence?: Prisma.SortOrder
   type?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   dateValidation?: Prisma.SortOrder
@@ -513,22 +440,12 @@ export type LicenceCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type LicenceAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  joueurId?: Prisma.SortOrder
-  saisonId?: Prisma.SortOrder
-  clubPrecedentId?: Prisma.SortOrder
-  clubActuelId?: Prisma.SortOrder
-  numeroLicence?: Prisma.SortOrder
-}
-
 export type LicenceMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   joueurId?: Prisma.SortOrder
   saisonId?: Prisma.SortOrder
   clubPrecedentId?: Prisma.SortOrder
   clubActuelId?: Prisma.SortOrder
-  numeroLicence?: Prisma.SortOrder
   type?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   dateValidation?: Prisma.SortOrder
@@ -543,22 +460,12 @@ export type LicenceMinOrderByAggregateInput = {
   saisonId?: Prisma.SortOrder
   clubPrecedentId?: Prisma.SortOrder
   clubActuelId?: Prisma.SortOrder
-  numeroLicence?: Prisma.SortOrder
   type?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   dateValidation?: Prisma.SortOrder
   commentaireAdmin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type LicenceSumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  joueurId?: Prisma.SortOrder
-  saisonId?: Prisma.SortOrder
-  clubPrecedentId?: Prisma.SortOrder
-  clubActuelId?: Prisma.SortOrder
-  numeroLicence?: Prisma.SortOrder
 }
 
 export type LicenceScalarRelationFilter = {
@@ -734,14 +641,6 @@ export type LicenceUncheckedUpdateManyWithoutSaisonNestedInput = {
   deleteMany?: Prisma.LicenceScalarWhereInput | Prisma.LicenceScalarWhereInput[]
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type EnumTypeLicenceFieldUpdateOperationsInput = {
   set?: $Enums.TypeLicence
 }
@@ -769,7 +668,7 @@ export type LicenceUpdateOneRequiredWithoutPaiementNestedInput = {
 }
 
 export type LicenceCreateWithoutJoueurInput = {
-  numeroLicence?: number | null
+  id?: string
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -783,11 +682,10 @@ export type LicenceCreateWithoutJoueurInput = {
 }
 
 export type LicenceUncheckedCreateWithoutJoueurInput = {
-  id?: number
-  saisonId: number
-  clubPrecedentId?: number | null
-  clubActuelId?: number | null
-  numeroLicence?: number | null
+  id?: string
+  saisonId: string
+  clubPrecedentId?: string | null
+  clubActuelId?: string | null
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -827,12 +725,11 @@ export type LicenceScalarWhereInput = {
   AND?: Prisma.LicenceScalarWhereInput | Prisma.LicenceScalarWhereInput[]
   OR?: Prisma.LicenceScalarWhereInput[]
   NOT?: Prisma.LicenceScalarWhereInput | Prisma.LicenceScalarWhereInput[]
-  id?: Prisma.IntFilter<"Licence"> | number
-  joueurId?: Prisma.IntFilter<"Licence"> | number
-  saisonId?: Prisma.IntFilter<"Licence"> | number
-  clubPrecedentId?: Prisma.IntNullableFilter<"Licence"> | number | null
-  clubActuelId?: Prisma.IntNullableFilter<"Licence"> | number | null
-  numeroLicence?: Prisma.IntNullableFilter<"Licence"> | number | null
+  id?: Prisma.UuidFilter<"Licence"> | string
+  joueurId?: Prisma.UuidFilter<"Licence"> | string
+  saisonId?: Prisma.UuidFilter<"Licence"> | string
+  clubPrecedentId?: Prisma.UuidNullableFilter<"Licence"> | string | null
+  clubActuelId?: Prisma.UuidNullableFilter<"Licence"> | string | null
   type?: Prisma.EnumTypeLicenceFilter<"Licence"> | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFilter<"Licence"> | $Enums.StatutLicence
   dateValidation?: Prisma.DateTimeNullableFilter<"Licence"> | Date | string | null
@@ -842,7 +739,7 @@ export type LicenceScalarWhereInput = {
 }
 
 export type LicenceCreateWithoutClubActuelInput = {
-  numeroLicence?: number | null
+  id?: string
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -856,11 +753,10 @@ export type LicenceCreateWithoutClubActuelInput = {
 }
 
 export type LicenceUncheckedCreateWithoutClubActuelInput = {
-  id?: number
-  joueurId: number
-  saisonId: number
-  clubPrecedentId?: number | null
-  numeroLicence?: number | null
+  id?: string
+  joueurId: string
+  saisonId: string
+  clubPrecedentId?: string | null
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -881,7 +777,7 @@ export type LicenceCreateManyClubActuelInputEnvelope = {
 }
 
 export type LicenceCreateWithoutClubPrecedentInput = {
-  numeroLicence?: number | null
+  id?: string
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -895,11 +791,10 @@ export type LicenceCreateWithoutClubPrecedentInput = {
 }
 
 export type LicenceUncheckedCreateWithoutClubPrecedentInput = {
-  id?: number
-  joueurId: number
-  saisonId: number
-  clubActuelId?: number | null
-  numeroLicence?: number | null
+  id?: string
+  joueurId: string
+  saisonId: string
+  clubActuelId?: string | null
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -952,7 +847,7 @@ export type LicenceUpdateManyWithWhereWithoutClubPrecedentInput = {
 }
 
 export type LicenceCreateWithoutSaisonInput = {
-  numeroLicence?: number | null
+  id?: string
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -966,11 +861,10 @@ export type LicenceCreateWithoutSaisonInput = {
 }
 
 export type LicenceUncheckedCreateWithoutSaisonInput = {
-  id?: number
-  joueurId: number
-  clubPrecedentId?: number | null
-  clubActuelId?: number | null
-  numeroLicence?: number | null
+  id?: string
+  joueurId: string
+  clubPrecedentId?: string | null
+  clubActuelId?: string | null
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -1007,7 +901,7 @@ export type LicenceUpdateManyWithWhereWithoutSaisonInput = {
 }
 
 export type LicenceCreateWithoutPaiementInput = {
-  numeroLicence?: number | null
+  id?: string
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -1021,12 +915,11 @@ export type LicenceCreateWithoutPaiementInput = {
 }
 
 export type LicenceUncheckedCreateWithoutPaiementInput = {
-  id?: number
-  joueurId: number
-  saisonId: number
-  clubPrecedentId?: number | null
-  clubActuelId?: number | null
-  numeroLicence?: number | null
+  id?: string
+  joueurId: string
+  saisonId: string
+  clubPrecedentId?: string | null
+  clubActuelId?: string | null
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -1052,7 +945,7 @@ export type LicenceUpdateToOneWithWhereWithoutPaiementInput = {
 }
 
 export type LicenceUpdateWithoutPaiementInput = {
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1066,12 +959,11 @@ export type LicenceUpdateWithoutPaiementInput = {
 }
 
 export type LicenceUncheckedUpdateWithoutPaiementInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  joueurId?: Prisma.IntFieldUpdateOperationsInput | number
-  saisonId?: Prisma.IntFieldUpdateOperationsInput | number
-  clubPrecedentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clubActuelId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  joueurId?: Prisma.StringFieldUpdateOperationsInput | string
+  saisonId?: Prisma.StringFieldUpdateOperationsInput | string
+  clubPrecedentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clubActuelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1081,11 +973,10 @@ export type LicenceUncheckedUpdateWithoutPaiementInput = {
 }
 
 export type LicenceCreateManyJoueurInput = {
-  id?: number
-  saisonId: number
-  clubPrecedentId?: number | null
-  clubActuelId?: number | null
-  numeroLicence?: number | null
+  id?: string
+  saisonId: string
+  clubPrecedentId?: string | null
+  clubActuelId?: string | null
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -1095,7 +986,7 @@ export type LicenceCreateManyJoueurInput = {
 }
 
 export type LicenceUpdateWithoutJoueurInput = {
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1109,11 +1000,10 @@ export type LicenceUpdateWithoutJoueurInput = {
 }
 
 export type LicenceUncheckedUpdateWithoutJoueurInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  saisonId?: Prisma.IntFieldUpdateOperationsInput | number
-  clubPrecedentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clubActuelId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  saisonId?: Prisma.StringFieldUpdateOperationsInput | string
+  clubPrecedentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clubActuelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1124,11 +1014,10 @@ export type LicenceUncheckedUpdateWithoutJoueurInput = {
 }
 
 export type LicenceUncheckedUpdateManyWithoutJoueurInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  saisonId?: Prisma.IntFieldUpdateOperationsInput | number
-  clubPrecedentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clubActuelId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  saisonId?: Prisma.StringFieldUpdateOperationsInput | string
+  clubPrecedentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clubActuelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1138,11 +1027,10 @@ export type LicenceUncheckedUpdateManyWithoutJoueurInput = {
 }
 
 export type LicenceCreateManyClubActuelInput = {
-  id?: number
-  joueurId: number
-  saisonId: number
-  clubPrecedentId?: number | null
-  numeroLicence?: number | null
+  id?: string
+  joueurId: string
+  saisonId: string
+  clubPrecedentId?: string | null
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -1152,11 +1040,10 @@ export type LicenceCreateManyClubActuelInput = {
 }
 
 export type LicenceCreateManyClubPrecedentInput = {
-  id?: number
-  joueurId: number
-  saisonId: number
-  clubActuelId?: number | null
-  numeroLicence?: number | null
+  id?: string
+  joueurId: string
+  saisonId: string
+  clubActuelId?: string | null
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -1166,7 +1053,7 @@ export type LicenceCreateManyClubPrecedentInput = {
 }
 
 export type LicenceUpdateWithoutClubActuelInput = {
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1180,11 +1067,10 @@ export type LicenceUpdateWithoutClubActuelInput = {
 }
 
 export type LicenceUncheckedUpdateWithoutClubActuelInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  joueurId?: Prisma.IntFieldUpdateOperationsInput | number
-  saisonId?: Prisma.IntFieldUpdateOperationsInput | number
-  clubPrecedentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  joueurId?: Prisma.StringFieldUpdateOperationsInput | string
+  saisonId?: Prisma.StringFieldUpdateOperationsInput | string
+  clubPrecedentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1195,11 +1081,10 @@ export type LicenceUncheckedUpdateWithoutClubActuelInput = {
 }
 
 export type LicenceUncheckedUpdateManyWithoutClubActuelInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  joueurId?: Prisma.IntFieldUpdateOperationsInput | number
-  saisonId?: Prisma.IntFieldUpdateOperationsInput | number
-  clubPrecedentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  joueurId?: Prisma.StringFieldUpdateOperationsInput | string
+  saisonId?: Prisma.StringFieldUpdateOperationsInput | string
+  clubPrecedentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1209,7 +1094,7 @@ export type LicenceUncheckedUpdateManyWithoutClubActuelInput = {
 }
 
 export type LicenceUpdateWithoutClubPrecedentInput = {
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1223,11 +1108,10 @@ export type LicenceUpdateWithoutClubPrecedentInput = {
 }
 
 export type LicenceUncheckedUpdateWithoutClubPrecedentInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  joueurId?: Prisma.IntFieldUpdateOperationsInput | number
-  saisonId?: Prisma.IntFieldUpdateOperationsInput | number
-  clubActuelId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  joueurId?: Prisma.StringFieldUpdateOperationsInput | string
+  saisonId?: Prisma.StringFieldUpdateOperationsInput | string
+  clubActuelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1238,11 +1122,10 @@ export type LicenceUncheckedUpdateWithoutClubPrecedentInput = {
 }
 
 export type LicenceUncheckedUpdateManyWithoutClubPrecedentInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  joueurId?: Prisma.IntFieldUpdateOperationsInput | number
-  saisonId?: Prisma.IntFieldUpdateOperationsInput | number
-  clubActuelId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  joueurId?: Prisma.StringFieldUpdateOperationsInput | string
+  saisonId?: Prisma.StringFieldUpdateOperationsInput | string
+  clubActuelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1252,11 +1135,10 @@ export type LicenceUncheckedUpdateManyWithoutClubPrecedentInput = {
 }
 
 export type LicenceCreateManySaisonInput = {
-  id?: number
-  joueurId: number
-  clubPrecedentId?: number | null
-  clubActuelId?: number | null
-  numeroLicence?: number | null
+  id?: string
+  joueurId: string
+  clubPrecedentId?: string | null
+  clubActuelId?: string | null
   type: $Enums.TypeLicence
   statut?: $Enums.StatutLicence
   dateValidation?: Date | string | null
@@ -1266,7 +1148,7 @@ export type LicenceCreateManySaisonInput = {
 }
 
 export type LicenceUpdateWithoutSaisonInput = {
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1280,11 +1162,10 @@ export type LicenceUpdateWithoutSaisonInput = {
 }
 
 export type LicenceUncheckedUpdateWithoutSaisonInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  joueurId?: Prisma.IntFieldUpdateOperationsInput | number
-  clubPrecedentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clubActuelId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  joueurId?: Prisma.StringFieldUpdateOperationsInput | string
+  clubPrecedentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clubActuelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1295,11 +1176,10 @@ export type LicenceUncheckedUpdateWithoutSaisonInput = {
 }
 
 export type LicenceUncheckedUpdateManyWithoutSaisonInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  joueurId?: Prisma.IntFieldUpdateOperationsInput | number
-  clubPrecedentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clubActuelId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  numeroLicence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  joueurId?: Prisma.StringFieldUpdateOperationsInput | string
+  clubPrecedentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clubActuelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTypeLicenceFieldUpdateOperationsInput | $Enums.TypeLicence
   statut?: Prisma.EnumStatutLicenceFieldUpdateOperationsInput | $Enums.StatutLicence
   dateValidation?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1316,7 +1196,6 @@ export type LicenceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   saisonId?: boolean
   clubPrecedentId?: boolean
   clubActuelId?: boolean
-  numeroLicence?: boolean
   type?: boolean
   statut?: boolean
   dateValidation?: boolean
@@ -1336,7 +1215,6 @@ export type LicenceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   saisonId?: boolean
   clubPrecedentId?: boolean
   clubActuelId?: boolean
-  numeroLicence?: boolean
   type?: boolean
   statut?: boolean
   dateValidation?: boolean
@@ -1355,7 +1233,6 @@ export type LicenceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   saisonId?: boolean
   clubPrecedentId?: boolean
   clubActuelId?: boolean
-  numeroLicence?: boolean
   type?: boolean
   statut?: boolean
   dateValidation?: boolean
@@ -1374,7 +1251,6 @@ export type LicenceSelectScalar = {
   saisonId?: boolean
   clubPrecedentId?: boolean
   clubActuelId?: boolean
-  numeroLicence?: boolean
   type?: boolean
   statut?: boolean
   dateValidation?: boolean
@@ -1383,7 +1259,7 @@ export type LicenceSelectScalar = {
   updatedAt?: boolean
 }
 
-export type LicenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "joueurId" | "saisonId" | "clubPrecedentId" | "clubActuelId" | "numeroLicence" | "type" | "statut" | "dateValidation" | "commentaireAdmin" | "createdAt" | "updatedAt", ExtArgs["result"]["licence"]>
+export type LicenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "joueurId" | "saisonId" | "clubPrecedentId" | "clubActuelId" | "type" | "statut" | "dateValidation" | "commentaireAdmin" | "createdAt" | "updatedAt", ExtArgs["result"]["licence"]>
 export type LicenceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   joueur?: boolean | Prisma.JoueurDefaultArgs<ExtArgs>
   saison?: boolean | Prisma.SaisonDefaultArgs<ExtArgs>
@@ -1414,12 +1290,11 @@ export type $LicencePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     paiement: Prisma.$PaiementPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
-    joueurId: number
-    saisonId: number
-    clubPrecedentId: number | null
-    clubActuelId: number | null
-    numeroLicence: number | null
+    id: string
+    joueurId: string
+    saisonId: string
+    clubPrecedentId: string | null
+    clubActuelId: string | null
     type: $Enums.TypeLicence
     statut: $Enums.StatutLicence
     dateValidation: Date | null
@@ -1854,12 +1729,11 @@ export interface Prisma__LicenceClient<T, Null = never, ExtArgs extends runtime.
  * Fields of the Licence model
  */
 export interface LicenceFieldRefs {
-  readonly id: Prisma.FieldRef<"Licence", 'Int'>
-  readonly joueurId: Prisma.FieldRef<"Licence", 'Int'>
-  readonly saisonId: Prisma.FieldRef<"Licence", 'Int'>
-  readonly clubPrecedentId: Prisma.FieldRef<"Licence", 'Int'>
-  readonly clubActuelId: Prisma.FieldRef<"Licence", 'Int'>
-  readonly numeroLicence: Prisma.FieldRef<"Licence", 'Int'>
+  readonly id: Prisma.FieldRef<"Licence", 'String'>
+  readonly joueurId: Prisma.FieldRef<"Licence", 'String'>
+  readonly saisonId: Prisma.FieldRef<"Licence", 'String'>
+  readonly clubPrecedentId: Prisma.FieldRef<"Licence", 'String'>
+  readonly clubActuelId: Prisma.FieldRef<"Licence", 'String'>
   readonly type: Prisma.FieldRef<"Licence", 'TypeLicence'>
   readonly statut: Prisma.FieldRef<"Licence", 'StatutLicence'>
   readonly dateValidation: Prisma.FieldRef<"Licence", 'DateTime'>

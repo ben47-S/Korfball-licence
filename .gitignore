@@ -44,3 +44,10 @@ next-env.d.ts
 prisma/*.db
 prisma/*.db-journal
 prisma/data.db
+
+# Temporary files
+tmpclaude-*
+
+# Firebase service account key
+firebase-service-account.json
+*.firebase-adminsdk*.json

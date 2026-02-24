@@ -93,12 +93,17 @@ export const JoueurScalarFieldEnum = {
   id: 'id',
   nom: 'nom',
   prenom: 'prenom',
+  email: 'email',
+  telephone: 'telephone',
   dateNaissance: 'dateNaissance',
   lieuNaissance: 'lieuNaissance',
   nationalite: 'nationalite',
   sexe: 'sexe',
   photo: 'photo',
   signature: 'signature',
+  pieceIdentite: 'pieceIdentite',
+  certificatMedical: 'certificatMedical',
+  numeroLicence: 'numeroLicence',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -110,6 +115,8 @@ export const ResponsableScalarFieldEnum = {
   id: 'id',
   nom: 'nom',
   prenom: 'prenom',
+  telephone: 'telephone',
+  email: 'email',
   lien: 'lien',
   joueurId: 'joueurId'
 } as const
@@ -134,7 +141,8 @@ export const SaisonScalarFieldEnum = {
   debut: 'debut',
   fin: 'fin',
   inscriptionDebut: 'inscriptionDebut',
-  inscriptionFin: 'inscriptionFin'
+  inscriptionFin: 'inscriptionFin',
+  enCours: 'enCours'
 } as const
 
 export type SaisonScalarFieldEnum = (typeof SaisonScalarFieldEnum)[keyof typeof SaisonScalarFieldEnum]
@@ -146,7 +154,6 @@ export const LicenceScalarFieldEnum = {
   saisonId: 'saisonId',
   clubPrecedentId: 'clubPrecedentId',
   clubActuelId: 'clubActuelId',
-  numeroLicence: 'numeroLicence',
   type: 'type',
   statut: 'statut',
   dateValidation: 'dateValidation',

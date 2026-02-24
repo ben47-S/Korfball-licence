@@ -27,26 +27,22 @@ export type AggregatePaiement = {
 }
 
 export type PaiementAvgAggregateOutputType = {
-  id: number | null
   montant: number | null
-  licenceId: number | null
 }
 
 export type PaiementSumAggregateOutputType = {
-  id: number | null
   montant: number | null
-  licenceId: number | null
 }
 
 export type PaiementMinAggregateOutputType = {
-  id: number | null
+  id: string | null
   provider: string | null
   transactionId: string | null
   reference: string | null
   montant: number | null
   devise: string | null
   statut: $Enums.StatutPaiement | null
-  licenceId: number | null
+  licenceId: string | null
   paymentUrl: string | null
   rawResponse: string | null
   createdAt: Date | null
@@ -54,14 +50,14 @@ export type PaiementMinAggregateOutputType = {
 }
 
 export type PaiementMaxAggregateOutputType = {
-  id: number | null
+  id: string | null
   provider: string | null
   transactionId: string | null
   reference: string | null
   montant: number | null
   devise: string | null
   statut: $Enums.StatutPaiement | null
-  licenceId: number | null
+  licenceId: string | null
   paymentUrl: string | null
   rawResponse: string | null
   createdAt: Date | null
@@ -86,15 +82,11 @@ export type PaiementCountAggregateOutputType = {
 
 
 export type PaiementAvgAggregateInputType = {
-  id?: true
   montant?: true
-  licenceId?: true
 }
 
 export type PaiementSumAggregateInputType = {
-  id?: true
   montant?: true
-  licenceId?: true
 }
 
 export type PaiementMinAggregateInputType = {
@@ -230,14 +222,14 @@ export type PaiementGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 }
 
 export type PaiementGroupByOutputType = {
-  id: number
+  id: string
   provider: string
   transactionId: string
   reference: string
   montant: number
   devise: string
   statut: $Enums.StatutPaiement
-  licenceId: number
+  licenceId: string
   paymentUrl: string | null
   rawResponse: string | null
   createdAt: Date
@@ -268,14 +260,14 @@ export type PaiementWhereInput = {
   AND?: Prisma.PaiementWhereInput | Prisma.PaiementWhereInput[]
   OR?: Prisma.PaiementWhereInput[]
   NOT?: Prisma.PaiementWhereInput | Prisma.PaiementWhereInput[]
-  id?: Prisma.IntFilter<"Paiement"> | number
+  id?: Prisma.UuidFilter<"Paiement"> | string
   provider?: Prisma.StringFilter<"Paiement"> | string
   transactionId?: Prisma.StringFilter<"Paiement"> | string
   reference?: Prisma.StringFilter<"Paiement"> | string
   montant?: Prisma.FloatFilter<"Paiement"> | number
   devise?: Prisma.StringFilter<"Paiement"> | string
   statut?: Prisma.EnumStatutPaiementFilter<"Paiement"> | $Enums.StatutPaiement
-  licenceId?: Prisma.IntFilter<"Paiement"> | number
+  licenceId?: Prisma.UuidFilter<"Paiement"> | string
   paymentUrl?: Prisma.StringNullableFilter<"Paiement"> | string | null
   rawResponse?: Prisma.StringNullableFilter<"Paiement"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Paiement"> | Date | string
@@ -300,10 +292,10 @@ export type PaiementOrderByWithRelationInput = {
 }
 
 export type PaiementWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
+  id?: string
   transactionId?: string
   reference?: string
-  licenceId?: number
+  licenceId?: string
   AND?: Prisma.PaiementWhereInput | Prisma.PaiementWhereInput[]
   OR?: Prisma.PaiementWhereInput[]
   NOT?: Prisma.PaiementWhereInput | Prisma.PaiementWhereInput[]
@@ -342,14 +334,14 @@ export type PaiementScalarWhereWithAggregatesInput = {
   AND?: Prisma.PaiementScalarWhereWithAggregatesInput | Prisma.PaiementScalarWhereWithAggregatesInput[]
   OR?: Prisma.PaiementScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PaiementScalarWhereWithAggregatesInput | Prisma.PaiementScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"Paiement"> | number
+  id?: Prisma.UuidWithAggregatesFilter<"Paiement"> | string
   provider?: Prisma.StringWithAggregatesFilter<"Paiement"> | string
   transactionId?: Prisma.StringWithAggregatesFilter<"Paiement"> | string
   reference?: Prisma.StringWithAggregatesFilter<"Paiement"> | string
   montant?: Prisma.FloatWithAggregatesFilter<"Paiement"> | number
   devise?: Prisma.StringWithAggregatesFilter<"Paiement"> | string
   statut?: Prisma.EnumStatutPaiementWithAggregatesFilter<"Paiement"> | $Enums.StatutPaiement
-  licenceId?: Prisma.IntWithAggregatesFilter<"Paiement"> | number
+  licenceId?: Prisma.UuidWithAggregatesFilter<"Paiement"> | string
   paymentUrl?: Prisma.StringNullableWithAggregatesFilter<"Paiement"> | string | null
   rawResponse?: Prisma.StringNullableWithAggregatesFilter<"Paiement"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Paiement"> | Date | string
@@ -357,6 +349,7 @@ export type PaiementScalarWhereWithAggregatesInput = {
 }
 
 export type PaiementCreateInput = {
+  id?: string
   provider?: string
   transactionId: string
   reference: string
@@ -371,14 +364,14 @@ export type PaiementCreateInput = {
 }
 
 export type PaiementUncheckedCreateInput = {
-  id?: number
+  id?: string
   provider?: string
   transactionId: string
   reference: string
   montant: number
   devise?: string
   statut?: $Enums.StatutPaiement
-  licenceId: number
+  licenceId: string
   paymentUrl?: string | null
   rawResponse?: string | null
   createdAt?: Date | string
@@ -386,6 +379,7 @@ export type PaiementUncheckedCreateInput = {
 }
 
 export type PaiementUpdateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   transactionId?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.StringFieldUpdateOperationsInput | string
@@ -400,14 +394,14 @@ export type PaiementUpdateInput = {
 }
 
 export type PaiementUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   transactionId?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.FloatFieldUpdateOperationsInput | number
   devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
-  licenceId?: Prisma.IntFieldUpdateOperationsInput | number
+  licenceId?: Prisma.StringFieldUpdateOperationsInput | string
   paymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rawResponse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -415,14 +409,14 @@ export type PaiementUncheckedUpdateInput = {
 }
 
 export type PaiementCreateManyInput = {
-  id?: number
+  id?: string
   provider?: string
   transactionId: string
   reference: string
   montant: number
   devise?: string
   statut?: $Enums.StatutPaiement
-  licenceId: number
+  licenceId: string
   paymentUrl?: string | null
   rawResponse?: string | null
   createdAt?: Date | string
@@ -430,6 +424,7 @@ export type PaiementCreateManyInput = {
 }
 
 export type PaiementUpdateManyMutationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   transactionId?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.StringFieldUpdateOperationsInput | string
@@ -443,14 +438,14 @@ export type PaiementUpdateManyMutationInput = {
 }
 
 export type PaiementUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   transactionId?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.FloatFieldUpdateOperationsInput | number
   devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
-  licenceId?: Prisma.IntFieldUpdateOperationsInput | number
+  licenceId?: Prisma.StringFieldUpdateOperationsInput | string
   paymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rawResponse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -478,9 +473,7 @@ export type PaiementCountOrderByAggregateInput = {
 }
 
 export type PaiementAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   montant?: Prisma.SortOrder
-  licenceId?: Prisma.SortOrder
 }
 
 export type PaiementMaxOrderByAggregateInput = {
@@ -514,9 +507,7 @@ export type PaiementMinOrderByAggregateInput = {
 }
 
 export type PaiementSumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   montant?: Prisma.SortOrder
-  licenceId?: Prisma.SortOrder
 }
 
 export type PaiementCreateNestedOneWithoutLicenceInput = {
@@ -564,6 +555,7 @@ export type EnumStatutPaiementFieldUpdateOperationsInput = {
 }
 
 export type PaiementCreateWithoutLicenceInput = {
+  id?: string
   provider?: string
   transactionId: string
   reference: string
@@ -577,7 +569,7 @@ export type PaiementCreateWithoutLicenceInput = {
 }
 
 export type PaiementUncheckedCreateWithoutLicenceInput = {
-  id?: number
+  id?: string
   provider?: string
   transactionId: string
   reference: string
@@ -607,6 +599,7 @@ export type PaiementUpdateToOneWithWhereWithoutLicenceInput = {
 }
 
 export type PaiementUpdateWithoutLicenceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   transactionId?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.StringFieldUpdateOperationsInput | string
@@ -620,7 +613,7 @@ export type PaiementUpdateWithoutLicenceInput = {
 }
 
 export type PaiementUncheckedUpdateWithoutLicenceInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   transactionId?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.StringFieldUpdateOperationsInput | string
@@ -715,14 +708,14 @@ export type $PaiementPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     licence: Prisma.$LicencePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
+    id: string
     provider: string
     transactionId: string
     reference: string
     montant: number
     devise: string
     statut: $Enums.StatutPaiement
-    licenceId: number
+    licenceId: string
     paymentUrl: string | null
     rawResponse: string | null
     createdAt: Date
@@ -1151,14 +1144,14 @@ export interface Prisma__PaiementClient<T, Null = never, ExtArgs extends runtime
  * Fields of the Paiement model
  */
 export interface PaiementFieldRefs {
-  readonly id: Prisma.FieldRef<"Paiement", 'Int'>
+  readonly id: Prisma.FieldRef<"Paiement", 'String'>
   readonly provider: Prisma.FieldRef<"Paiement", 'String'>
   readonly transactionId: Prisma.FieldRef<"Paiement", 'String'>
   readonly reference: Prisma.FieldRef<"Paiement", 'String'>
   readonly montant: Prisma.FieldRef<"Paiement", 'Float'>
   readonly devise: Prisma.FieldRef<"Paiement", 'String'>
   readonly statut: Prisma.FieldRef<"Paiement", 'StatutPaiement'>
-  readonly licenceId: Prisma.FieldRef<"Paiement", 'Int'>
+  readonly licenceId: Prisma.FieldRef<"Paiement", 'String'>
   readonly paymentUrl: Prisma.FieldRef<"Paiement", 'String'>
   readonly rawResponse: Prisma.FieldRef<"Paiement", 'String'>
   readonly createdAt: Prisma.FieldRef<"Paiement", 'DateTime'>

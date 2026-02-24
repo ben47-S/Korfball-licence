@@ -1,143 +1,114 @@
-import 'dotenv/config'
-import { PrismaClient, Prisma } from "../generated/prisma/client";
-import { PrismaPg } from '@prisma/adapter-pg'
-import pg from 'pg'
+import 'dotenv/config';
+import { PrismaClient } from "../generated/prisma/client";
+import { PrismaPg } from '@prisma/adapter-pg';
+import { 
+  Role, 
+  TypeLicence, 
+  StatutLicence, 
+  LienResponsable, 
+  StatutPaiement 
+} from "../generated/prisma/enums";
 
-// Configuration de l'adaptateur PostgreSQL pour Prisma 7
-const connectionString = process.env.DATABASE_URL
-const pool = new pg.Pool({ connectionString })
-const adapter = new PrismaPg(pool)
+// Utilise l'adapter PrismaPg comme dans prisma.ts
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
 
-// Initialisation du client avec l'adaptateur
-const prisma = new PrismaClient({ adapter });
-
-// ==============================
-// DATA SEEDS
-// ==============================
-
-const userData: Prisma.UserCreateInput[] = [
-  {
-    nom: "Admin",
-    prenom: "System",
-    email: "admin@korfball.com",
-    telephone: "+33123456789",
-    role: "ADMIN",
-  },
-  {
-    nom: "Agent",
-    prenom: "Test",
-    email: "agent@korfball.com",
-    telephone: "+33198765432",
-    role: "AGENT",
-  },
-];
-
-const clubData: Prisma.ClubCreateInput[] = [
-  { nom: "ASK Korfball", ville: "Paris", pays: "France" },
-  { nom: "KB Lyon", ville: "Lyon", pays: "France" },
-  { nom: "Korfball Marseille", ville: "Marseille", pays: "France" },
-];
-
-const saisonData: Prisma.SaisonCreateInput[] = [
-  {
-    code: "2024-2025",
-    debut: new Date("2024-09-01"),
-    fin: new Date("2025-06-30"),
-    inscriptionDebut: new Date("2024-08-01"),
-    inscriptionFin: new Date("2024-09-30"),
-  },
-];
-
-const joueurData: Prisma.JoueurCreateInput[] = [
-  {
-    nom: "Dupont",
-    prenom: "Jean",
-    dateNaissance: new Date("2005-03-15"),
-    lieuNaissance: "Paris",
-    nationalite: "Française",
-    sexe: "M",
-  },
-  {
-    nom: "Martin",
-    prenom: "Marie",
-    dateNaissance: new Date("2006-07-22"),
-    lieuNaissance: "Lyon",
-    nationalite: "Française",
-    sexe: "F",
-  },
-];
-
-// ==============================
-// SEED FUNCTION
-// ==============================
+const prisma = new PrismaClient({
+  adapter,
+});
 
 async function main() {
-  try {
-    console.log("🌱 Début du seeding PostgreSQL...");
+  console.log("Début du seeding...");
 
-    // 1. Users (upsert pour éviter les doublons sur l'email)
-    for (const user of userData) {
-      await prisma.user.upsert({
-        where: { email: user.email },
-        update: {},
-        create: user,
-      });
-    }
-    console.log("✅ Utilisateurs traités");
+  // 1. Création d'un Utilisateur (Admin)
+  const admin = await prisma.user.upsert({
+    where: { email: "admin@federation.ci" },
+    update: {},
+    create: {
+      nom: "Bakayoko",
+      prenom: "Moussa",
+      email: "admin@federation.ci",
+      role: Role.ADMIN,
+      telephone: "+2250102030405",
+    },
+  });
 
-    // 2. Clubs
-    const clubs = await Promise.all(
-      clubData.map((club) => prisma.club.create({ data: club }))
-    );
-    console.log(`✅ ${clubs.length} clubs créés`);
+  // 2. Création d'une Saison
+  const saison = await prisma.saison.upsert({
+    where: { code: "2024-2025" },
+    update: {},
+    create: {
+      code: "2024-2025",
+      debut: new Date("2024-09-01"),
+      fin: new Date("2025-06-30"),
+      inscriptionDebut: new Date("2024-08-01"),
+      inscriptionFin: new Date("2024-12-31"),
+    },
+  });
 
-    // 3. Saisons
-    const saisons = await Promise.all(
-      saisonData.map((saison) => prisma.saison.create({ data: saison }))
-    );
-    console.log(`✅ Saisons créées`);
+  // 3. Création d'un Club
+  const club = await prisma.club.create({
+    data: {
+      nom: "ASEC Mimosas",
+      ville: "Abidjan",
+      pays: "Côte d'Ivoire",
+    },
+  });
 
-    // 4. Joueurs & Licences
-    const saisonActuelle = saisons[0];
-    for (let i = 0; i < joueurData.length; i++) {
-      const joueur = await prisma.joueur.create({
-        data: {
-          ...joueurData[i],
-          responsables: {
-            create: [{ nom: joueurData[i].nom, prenom: "Parent", lien: "PERE" }]
-          },
-          licences: {
+  // 4. Création d'un Joueur avec Responsable et Licence
+  const joueur = await prisma.joueur.create({
+    data: {
+      nom: "Kouassi",
+      prenom: "Jean",
+      dateNaissance: new Date("2010-05-15"),
+      lieuNaissance: "Bouaké",
+      nationalite: "Ivoirienne",
+      sexe: "M",
+      numeroLicence: "FIK-2024-100245", // Format: FIK-YYYY-XXXXXX
+      responsables: {
+        create: {
+          nom: "Kouassi",
+          prenom: "Marc",
+          lien: LienResponsable.PERE,
+        },
+      },
+      licences: {
+        create: {
+          saisonId: saison.id,
+          clubActuelId: club.id,
+          type: TypeLicence.NOUVEAU,
+          statut: StatutLicence.VALIDEE,
+          paiement: {
             create: {
-              saisonId: saisonActuelle.id,
-              clubActuelId: clubs[i % clubs.length].id,
-              numeroLicence: 2024000 + i,
-              type: "NOUVEAU",
-              statut: "BROUILLON",
-              paiement: {
-                create: {
-                  provider: "CINETPAY",
-                  transactionId: `TXN_${Date.now()}_${i}`,
-                  reference: `REF_${2024000 + i}`,
-                  montant: 50000,
-                  devise: "XOF",
-                  statut: "EN_ATTENTE",
-                }
-              }
-            }
-          }
-        }
-      });
-      console.log(`   ✓ Joueur & Licence créés: ${joueur.prenom}`);
-    }
+              transactionId: "TRX-998877",
+              reference: "REF-INT-001",
+              montant: 5000,
+              statut: StatutPaiement.VALIDE,
+              paidAt: new Date(),
+            },
+          },
+        },
+      },
+    },
+  });
 
-    console.log("\n✨ Seeding PostgreSQL terminé !");
-  } catch (error) {
-    console.error("❌ Erreur lors du seeding:", error);
-    process.exit(1);
-  } finally {
-    await prisma.$disconnect();
-    await pool.end(); // Fermeture du pool de connexion pg
-  }
+  console.log({
+    admin: admin.email,
+    saison: saison.code,
+    club: club.nom,
+    joueur: `${joueur.prenom} ${joueur.nom}`
+  });
+  
+  console.log("Seeding terminé avec succès !");
 }
 
-main();
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

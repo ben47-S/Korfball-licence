@@ -20,22 +20,12 @@ export type ClubModel = runtime.Types.Result.DefaultSelection<Prisma.$ClubPayloa
 
 export type AggregateClub = {
   _count: ClubCountAggregateOutputType | null
-  _avg: ClubAvgAggregateOutputType | null
-  _sum: ClubSumAggregateOutputType | null
   _min: ClubMinAggregateOutputType | null
   _max: ClubMaxAggregateOutputType | null
 }
 
-export type ClubAvgAggregateOutputType = {
-  id: number | null
-}
-
-export type ClubSumAggregateOutputType = {
-  id: number | null
-}
-
 export type ClubMinAggregateOutputType = {
-  id: number | null
+  id: string | null
   nom: string | null
   ville: string | null
   pays: string | null
@@ -43,7 +33,7 @@ export type ClubMinAggregateOutputType = {
 }
 
 export type ClubMaxAggregateOutputType = {
-  id: number | null
+  id: string | null
   nom: string | null
   ville: string | null
   pays: string | null
@@ -59,14 +49,6 @@ export type ClubCountAggregateOutputType = {
   _all: number
 }
 
-
-export type ClubAvgAggregateInputType = {
-  id?: true
-}
-
-export type ClubSumAggregateInputType = {
-  id?: true
-}
 
 export type ClubMinAggregateInputType = {
   id?: true
@@ -131,18 +113,6 @@ export type ClubAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: ClubAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: ClubSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: ClubMinAggregateInputType
@@ -173,21 +143,17 @@ export type ClubGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: ClubCountAggregateInputType | true
-  _avg?: ClubAvgAggregateInputType
-  _sum?: ClubSumAggregateInputType
   _min?: ClubMinAggregateInputType
   _max?: ClubMaxAggregateInputType
 }
 
 export type ClubGroupByOutputType = {
-  id: number
+  id: string
   nom: string
-  ville: string | null
-  pays: string | null
+  ville: string
+  pays: string
   createdAt: Date
   _count: ClubCountAggregateOutputType | null
-  _avg: ClubAvgAggregateOutputType | null
-  _sum: ClubSumAggregateOutputType | null
   _min: ClubMinAggregateOutputType | null
   _max: ClubMaxAggregateOutputType | null
 }
@@ -211,10 +177,10 @@ export type ClubWhereInput = {
   AND?: Prisma.ClubWhereInput | Prisma.ClubWhereInput[]
   OR?: Prisma.ClubWhereInput[]
   NOT?: Prisma.ClubWhereInput | Prisma.ClubWhereInput[]
-  id?: Prisma.IntFilter<"Club"> | number
+  id?: Prisma.UuidFilter<"Club"> | string
   nom?: Prisma.StringFilter<"Club"> | string
-  ville?: Prisma.StringNullableFilter<"Club"> | string | null
-  pays?: Prisma.StringNullableFilter<"Club"> | string | null
+  ville?: Prisma.StringFilter<"Club"> | string
+  pays?: Prisma.StringFilter<"Club"> | string
   createdAt?: Prisma.DateTimeFilter<"Club"> | Date | string
   licencesActuelles?: Prisma.LicenceListRelationFilter
   licencesPrecedentes?: Prisma.LicenceListRelationFilter
@@ -223,21 +189,21 @@ export type ClubWhereInput = {
 export type ClubOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   nom?: Prisma.SortOrder
-  ville?: Prisma.SortOrderInput | Prisma.SortOrder
-  pays?: Prisma.SortOrderInput | Prisma.SortOrder
+  ville?: Prisma.SortOrder
+  pays?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   licencesActuelles?: Prisma.LicenceOrderByRelationAggregateInput
   licencesPrecedentes?: Prisma.LicenceOrderByRelationAggregateInput
 }
 
 export type ClubWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
+  id?: string
   AND?: Prisma.ClubWhereInput | Prisma.ClubWhereInput[]
   OR?: Prisma.ClubWhereInput[]
   NOT?: Prisma.ClubWhereInput | Prisma.ClubWhereInput[]
   nom?: Prisma.StringFilter<"Club"> | string
-  ville?: Prisma.StringNullableFilter<"Club"> | string | null
-  pays?: Prisma.StringNullableFilter<"Club"> | string | null
+  ville?: Prisma.StringFilter<"Club"> | string
+  pays?: Prisma.StringFilter<"Club"> | string
   createdAt?: Prisma.DateTimeFilter<"Club"> | Date | string
   licencesActuelles?: Prisma.LicenceListRelationFilter
   licencesPrecedentes?: Prisma.LicenceListRelationFilter
@@ -246,85 +212,86 @@ export type ClubWhereUniqueInput = Prisma.AtLeast<{
 export type ClubOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   nom?: Prisma.SortOrder
-  ville?: Prisma.SortOrderInput | Prisma.SortOrder
-  pays?: Prisma.SortOrderInput | Prisma.SortOrder
+  ville?: Prisma.SortOrder
+  pays?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.ClubCountOrderByAggregateInput
-  _avg?: Prisma.ClubAvgOrderByAggregateInput
   _max?: Prisma.ClubMaxOrderByAggregateInput
   _min?: Prisma.ClubMinOrderByAggregateInput
-  _sum?: Prisma.ClubSumOrderByAggregateInput
 }
 
 export type ClubScalarWhereWithAggregatesInput = {
   AND?: Prisma.ClubScalarWhereWithAggregatesInput | Prisma.ClubScalarWhereWithAggregatesInput[]
   OR?: Prisma.ClubScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ClubScalarWhereWithAggregatesInput | Prisma.ClubScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"Club"> | number
+  id?: Prisma.UuidWithAggregatesFilter<"Club"> | string
   nom?: Prisma.StringWithAggregatesFilter<"Club"> | string
-  ville?: Prisma.StringNullableWithAggregatesFilter<"Club"> | string | null
-  pays?: Prisma.StringNullableWithAggregatesFilter<"Club"> | string | null
+  ville?: Prisma.StringWithAggregatesFilter<"Club"> | string
+  pays?: Prisma.StringWithAggregatesFilter<"Club"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Club"> | Date | string
 }
 
 export type ClubCreateInput = {
+  id?: string
   nom: string
-  ville?: string | null
-  pays?: string | null
+  ville: string
+  pays: string
   createdAt?: Date | string
   licencesActuelles?: Prisma.LicenceCreateNestedManyWithoutClubActuelInput
   licencesPrecedentes?: Prisma.LicenceCreateNestedManyWithoutClubPrecedentInput
 }
 
 export type ClubUncheckedCreateInput = {
-  id?: number
+  id?: string
   nom: string
-  ville?: string | null
-  pays?: string | null
+  ville: string
+  pays: string
   createdAt?: Date | string
   licencesActuelles?: Prisma.LicenceUncheckedCreateNestedManyWithoutClubActuelInput
   licencesPrecedentes?: Prisma.LicenceUncheckedCreateNestedManyWithoutClubPrecedentInput
 }
 
 export type ClubUpdateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
-  ville?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pays?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ville?: Prisma.StringFieldUpdateOperationsInput | string
+  pays?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   licencesActuelles?: Prisma.LicenceUpdateManyWithoutClubActuelNestedInput
   licencesPrecedentes?: Prisma.LicenceUpdateManyWithoutClubPrecedentNestedInput
 }
 
 export type ClubUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
-  ville?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pays?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ville?: Prisma.StringFieldUpdateOperationsInput | string
+  pays?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   licencesActuelles?: Prisma.LicenceUncheckedUpdateManyWithoutClubActuelNestedInput
   licencesPrecedentes?: Prisma.LicenceUncheckedUpdateManyWithoutClubPrecedentNestedInput
 }
 
 export type ClubCreateManyInput = {
-  id?: number
+  id?: string
   nom: string
-  ville?: string | null
-  pays?: string | null
+  ville: string
+  pays: string
   createdAt?: Date | string
 }
 
 export type ClubUpdateManyMutationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
-  ville?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pays?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ville?: Prisma.StringFieldUpdateOperationsInput | string
+  pays?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ClubUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
-  ville?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pays?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ville?: Prisma.StringFieldUpdateOperationsInput | string
+  pays?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -334,10 +301,6 @@ export type ClubCountOrderByAggregateInput = {
   ville?: Prisma.SortOrder
   pays?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-}
-
-export type ClubAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
 }
 
 export type ClubMaxOrderByAggregateInput = {
@@ -354,10 +317,6 @@ export type ClubMinOrderByAggregateInput = {
   ville?: Prisma.SortOrder
   pays?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-}
-
-export type ClubSumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
 }
 
 export type ClubNullableScalarRelationFilter = {
@@ -398,18 +357,19 @@ export type ClubUpdateOneWithoutLicencesActuellesNestedInput = {
 }
 
 export type ClubCreateWithoutLicencesPrecedentesInput = {
+  id?: string
   nom: string
-  ville?: string | null
-  pays?: string | null
+  ville: string
+  pays: string
   createdAt?: Date | string
   licencesActuelles?: Prisma.LicenceCreateNestedManyWithoutClubActuelInput
 }
 
 export type ClubUncheckedCreateWithoutLicencesPrecedentesInput = {
-  id?: number
+  id?: string
   nom: string
-  ville?: string | null
-  pays?: string | null
+  ville: string
+  pays: string
   createdAt?: Date | string
   licencesActuelles?: Prisma.LicenceUncheckedCreateNestedManyWithoutClubActuelInput
 }
@@ -420,18 +380,19 @@ export type ClubCreateOrConnectWithoutLicencesPrecedentesInput = {
 }
 
 export type ClubCreateWithoutLicencesActuellesInput = {
+  id?: string
   nom: string
-  ville?: string | null
-  pays?: string | null
+  ville: string
+  pays: string
   createdAt?: Date | string
   licencesPrecedentes?: Prisma.LicenceCreateNestedManyWithoutClubPrecedentInput
 }
 
 export type ClubUncheckedCreateWithoutLicencesActuellesInput = {
-  id?: number
+  id?: string
   nom: string
-  ville?: string | null
-  pays?: string | null
+  ville: string
+  pays: string
   createdAt?: Date | string
   licencesPrecedentes?: Prisma.LicenceUncheckedCreateNestedManyWithoutClubPrecedentInput
 }
@@ -453,18 +414,19 @@ export type ClubUpdateToOneWithWhereWithoutLicencesPrecedentesInput = {
 }
 
 export type ClubUpdateWithoutLicencesPrecedentesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
-  ville?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pays?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ville?: Prisma.StringFieldUpdateOperationsInput | string
+  pays?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   licencesActuelles?: Prisma.LicenceUpdateManyWithoutClubActuelNestedInput
 }
 
 export type ClubUncheckedUpdateWithoutLicencesPrecedentesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
-  ville?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pays?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ville?: Prisma.StringFieldUpdateOperationsInput | string
+  pays?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   licencesActuelles?: Prisma.LicenceUncheckedUpdateManyWithoutClubActuelNestedInput
 }
@@ -481,18 +443,19 @@ export type ClubUpdateToOneWithWhereWithoutLicencesActuellesInput = {
 }
 
 export type ClubUpdateWithoutLicencesActuellesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
-  ville?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pays?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ville?: Prisma.StringFieldUpdateOperationsInput | string
+  pays?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   licencesPrecedentes?: Prisma.LicenceUpdateManyWithoutClubPrecedentNestedInput
 }
 
 export type ClubUncheckedUpdateWithoutLicencesActuellesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
-  ville?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pays?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ville?: Prisma.StringFieldUpdateOperationsInput | string
+  pays?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   licencesPrecedentes?: Prisma.LicenceUncheckedUpdateManyWithoutClubPrecedentNestedInput
 }
@@ -588,10 +551,10 @@ export type $ClubPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     licencesPrecedentes: Prisma.$LicencePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
+    id: string
     nom: string
-    ville: string | null
-    pays: string | null
+    ville: string
+    pays: string
     createdAt: Date
   }, ExtArgs["result"]["club"]>
   composites: {}
@@ -1018,7 +981,7 @@ export interface Prisma__ClubClient<T, Null = never, ExtArgs extends runtime.Typ
  * Fields of the Club model
  */
 export interface ClubFieldRefs {
-  readonly id: Prisma.FieldRef<"Club", 'Int'>
+  readonly id: Prisma.FieldRef<"Club", 'String'>
   readonly nom: Prisma.FieldRef<"Club", 'String'>
   readonly ville: Prisma.FieldRef<"Club", 'String'>
   readonly pays: Prisma.FieldRef<"Club", 'String'>

@@ -20,36 +20,28 @@ export type SaisonModel = runtime.Types.Result.DefaultSelection<Prisma.$SaisonPa
 
 export type AggregateSaison = {
   _count: SaisonCountAggregateOutputType | null
-  _avg: SaisonAvgAggregateOutputType | null
-  _sum: SaisonSumAggregateOutputType | null
   _min: SaisonMinAggregateOutputType | null
   _max: SaisonMaxAggregateOutputType | null
 }
 
-export type SaisonAvgAggregateOutputType = {
-  id: number | null
-}
-
-export type SaisonSumAggregateOutputType = {
-  id: number | null
-}
-
 export type SaisonMinAggregateOutputType = {
-  id: number | null
+  id: string | null
   code: string | null
   debut: Date | null
   fin: Date | null
   inscriptionDebut: Date | null
   inscriptionFin: Date | null
+  enCours: boolean | null
 }
 
 export type SaisonMaxAggregateOutputType = {
-  id: number | null
+  id: string | null
   code: string | null
   debut: Date | null
   fin: Date | null
   inscriptionDebut: Date | null
   inscriptionFin: Date | null
+  enCours: boolean | null
 }
 
 export type SaisonCountAggregateOutputType = {
@@ -59,17 +51,10 @@ export type SaisonCountAggregateOutputType = {
   fin: number
   inscriptionDebut: number
   inscriptionFin: number
+  enCours: number
   _all: number
 }
 
-
-export type SaisonAvgAggregateInputType = {
-  id?: true
-}
-
-export type SaisonSumAggregateInputType = {
-  id?: true
-}
 
 export type SaisonMinAggregateInputType = {
   id?: true
@@ -78,6 +63,7 @@ export type SaisonMinAggregateInputType = {
   fin?: true
   inscriptionDebut?: true
   inscriptionFin?: true
+  enCours?: true
 }
 
 export type SaisonMaxAggregateInputType = {
@@ -87,6 +73,7 @@ export type SaisonMaxAggregateInputType = {
   fin?: true
   inscriptionDebut?: true
   inscriptionFin?: true
+  enCours?: true
 }
 
 export type SaisonCountAggregateInputType = {
@@ -96,6 +83,7 @@ export type SaisonCountAggregateInputType = {
   fin?: true
   inscriptionDebut?: true
   inscriptionFin?: true
+  enCours?: true
   _all?: true
 }
 
@@ -137,18 +125,6 @@ export type SaisonAggregateArgs<ExtArgs extends runtime.Types.Extensions.Interna
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: SaisonAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: SaisonSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: SaisonMinAggregateInputType
@@ -179,22 +155,19 @@ export type SaisonGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   _count?: SaisonCountAggregateInputType | true
-  _avg?: SaisonAvgAggregateInputType
-  _sum?: SaisonSumAggregateInputType
   _min?: SaisonMinAggregateInputType
   _max?: SaisonMaxAggregateInputType
 }
 
 export type SaisonGroupByOutputType = {
-  id: number
+  id: string
   code: string
   debut: Date
   fin: Date
   inscriptionDebut: Date
   inscriptionFin: Date
+  enCours: boolean
   _count: SaisonCountAggregateOutputType | null
-  _avg: SaisonAvgAggregateOutputType | null
-  _sum: SaisonSumAggregateOutputType | null
   _min: SaisonMinAggregateOutputType | null
   _max: SaisonMaxAggregateOutputType | null
 }
@@ -218,12 +191,13 @@ export type SaisonWhereInput = {
   AND?: Prisma.SaisonWhereInput | Prisma.SaisonWhereInput[]
   OR?: Prisma.SaisonWhereInput[]
   NOT?: Prisma.SaisonWhereInput | Prisma.SaisonWhereInput[]
-  id?: Prisma.IntFilter<"Saison"> | number
+  id?: Prisma.UuidFilter<"Saison"> | string
   code?: Prisma.StringFilter<"Saison"> | string
   debut?: Prisma.DateTimeFilter<"Saison"> | Date | string
   fin?: Prisma.DateTimeFilter<"Saison"> | Date | string
   inscriptionDebut?: Prisma.DateTimeFilter<"Saison"> | Date | string
   inscriptionFin?: Prisma.DateTimeFilter<"Saison"> | Date | string
+  enCours?: Prisma.BoolFilter<"Saison"> | boolean
   licences?: Prisma.LicenceListRelationFilter
 }
 
@@ -234,11 +208,12 @@ export type SaisonOrderByWithRelationInput = {
   fin?: Prisma.SortOrder
   inscriptionDebut?: Prisma.SortOrder
   inscriptionFin?: Prisma.SortOrder
+  enCours?: Prisma.SortOrder
   licences?: Prisma.LicenceOrderByRelationAggregateInput
 }
 
 export type SaisonWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
+  id?: string
   code?: string
   AND?: Prisma.SaisonWhereInput | Prisma.SaisonWhereInput[]
   OR?: Prisma.SaisonWhereInput[]
@@ -247,6 +222,7 @@ export type SaisonWhereUniqueInput = Prisma.AtLeast<{
   fin?: Prisma.DateTimeFilter<"Saison"> | Date | string
   inscriptionDebut?: Prisma.DateTimeFilter<"Saison"> | Date | string
   inscriptionFin?: Prisma.DateTimeFilter<"Saison"> | Date | string
+  enCours?: Prisma.BoolFilter<"Saison"> | boolean
   licences?: Prisma.LicenceListRelationFilter
 }, "id" | "code">
 
@@ -257,87 +233,97 @@ export type SaisonOrderByWithAggregationInput = {
   fin?: Prisma.SortOrder
   inscriptionDebut?: Prisma.SortOrder
   inscriptionFin?: Prisma.SortOrder
+  enCours?: Prisma.SortOrder
   _count?: Prisma.SaisonCountOrderByAggregateInput
-  _avg?: Prisma.SaisonAvgOrderByAggregateInput
   _max?: Prisma.SaisonMaxOrderByAggregateInput
   _min?: Prisma.SaisonMinOrderByAggregateInput
-  _sum?: Prisma.SaisonSumOrderByAggregateInput
 }
 
 export type SaisonScalarWhereWithAggregatesInput = {
   AND?: Prisma.SaisonScalarWhereWithAggregatesInput | Prisma.SaisonScalarWhereWithAggregatesInput[]
   OR?: Prisma.SaisonScalarWhereWithAggregatesInput[]
   NOT?: Prisma.SaisonScalarWhereWithAggregatesInput | Prisma.SaisonScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"Saison"> | number
+  id?: Prisma.UuidWithAggregatesFilter<"Saison"> | string
   code?: Prisma.StringWithAggregatesFilter<"Saison"> | string
   debut?: Prisma.DateTimeWithAggregatesFilter<"Saison"> | Date | string
   fin?: Prisma.DateTimeWithAggregatesFilter<"Saison"> | Date | string
   inscriptionDebut?: Prisma.DateTimeWithAggregatesFilter<"Saison"> | Date | string
   inscriptionFin?: Prisma.DateTimeWithAggregatesFilter<"Saison"> | Date | string
+  enCours?: Prisma.BoolWithAggregatesFilter<"Saison"> | boolean
 }
 
 export type SaisonCreateInput = {
+  id?: string
   code: string
   debut: Date | string
   fin: Date | string
   inscriptionDebut: Date | string
   inscriptionFin: Date | string
+  enCours?: boolean
   licences?: Prisma.LicenceCreateNestedManyWithoutSaisonInput
 }
 
 export type SaisonUncheckedCreateInput = {
-  id?: number
+  id?: string
   code: string
   debut: Date | string
   fin: Date | string
   inscriptionDebut: Date | string
   inscriptionFin: Date | string
+  enCours?: boolean
   licences?: Prisma.LicenceUncheckedCreateNestedManyWithoutSaisonInput
 }
 
 export type SaisonUpdateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   debut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inscriptionDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inscriptionFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  enCours?: Prisma.BoolFieldUpdateOperationsInput | boolean
   licences?: Prisma.LicenceUpdateManyWithoutSaisonNestedInput
 }
 
 export type SaisonUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   debut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inscriptionDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inscriptionFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  enCours?: Prisma.BoolFieldUpdateOperationsInput | boolean
   licences?: Prisma.LicenceUncheckedUpdateManyWithoutSaisonNestedInput
 }
 
 export type SaisonCreateManyInput = {
-  id?: number
+  id?: string
   code: string
   debut: Date | string
   fin: Date | string
   inscriptionDebut: Date | string
   inscriptionFin: Date | string
+  enCours?: boolean
 }
 
 export type SaisonUpdateManyMutationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   debut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inscriptionDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inscriptionFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  enCours?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type SaisonUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   debut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inscriptionDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inscriptionFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  enCours?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type SaisonCountOrderByAggregateInput = {
@@ -347,10 +333,7 @@ export type SaisonCountOrderByAggregateInput = {
   fin?: Prisma.SortOrder
   inscriptionDebut?: Prisma.SortOrder
   inscriptionFin?: Prisma.SortOrder
-}
-
-export type SaisonAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
+  enCours?: Prisma.SortOrder
 }
 
 export type SaisonMaxOrderByAggregateInput = {
@@ -360,6 +343,7 @@ export type SaisonMaxOrderByAggregateInput = {
   fin?: Prisma.SortOrder
   inscriptionDebut?: Prisma.SortOrder
   inscriptionFin?: Prisma.SortOrder
+  enCours?: Prisma.SortOrder
 }
 
 export type SaisonMinOrderByAggregateInput = {
@@ -369,15 +353,16 @@ export type SaisonMinOrderByAggregateInput = {
   fin?: Prisma.SortOrder
   inscriptionDebut?: Prisma.SortOrder
   inscriptionFin?: Prisma.SortOrder
-}
-
-export type SaisonSumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
+  enCours?: Prisma.SortOrder
 }
 
 export type SaisonScalarRelationFilter = {
   is?: Prisma.SaisonWhereInput
   isNot?: Prisma.SaisonWhereInput
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type SaisonCreateNestedOneWithoutLicencesInput = {
@@ -395,20 +380,23 @@ export type SaisonUpdateOneRequiredWithoutLicencesNestedInput = {
 }
 
 export type SaisonCreateWithoutLicencesInput = {
+  id?: string
   code: string
   debut: Date | string
   fin: Date | string
   inscriptionDebut: Date | string
   inscriptionFin: Date | string
+  enCours?: boolean
 }
 
 export type SaisonUncheckedCreateWithoutLicencesInput = {
-  id?: number
+  id?: string
   code: string
   debut: Date | string
   fin: Date | string
   inscriptionDebut: Date | string
   inscriptionFin: Date | string
+  enCours?: boolean
 }
 
 export type SaisonCreateOrConnectWithoutLicencesInput = {
@@ -428,20 +416,23 @@ export type SaisonUpdateToOneWithWhereWithoutLicencesInput = {
 }
 
 export type SaisonUpdateWithoutLicencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   debut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inscriptionDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inscriptionFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  enCours?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type SaisonUncheckedUpdateWithoutLicencesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   debut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inscriptionDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inscriptionFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  enCours?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -482,6 +473,7 @@ export type SaisonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   fin?: boolean
   inscriptionDebut?: boolean
   inscriptionFin?: boolean
+  enCours?: boolean
   licences?: boolean | Prisma.Saison$licencesArgs<ExtArgs>
   _count?: boolean | Prisma.SaisonCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["saison"]>
@@ -493,6 +485,7 @@ export type SaisonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   fin?: boolean
   inscriptionDebut?: boolean
   inscriptionFin?: boolean
+  enCours?: boolean
 }, ExtArgs["result"]["saison"]>
 
 export type SaisonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -502,6 +495,7 @@ export type SaisonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   fin?: boolean
   inscriptionDebut?: boolean
   inscriptionFin?: boolean
+  enCours?: boolean
 }, ExtArgs["result"]["saison"]>
 
 export type SaisonSelectScalar = {
@@ -511,9 +505,10 @@ export type SaisonSelectScalar = {
   fin?: boolean
   inscriptionDebut?: boolean
   inscriptionFin?: boolean
+  enCours?: boolean
 }
 
-export type SaisonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "debut" | "fin" | "inscriptionDebut" | "inscriptionFin", ExtArgs["result"]["saison"]>
+export type SaisonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "debut" | "fin" | "inscriptionDebut" | "inscriptionFin" | "enCours", ExtArgs["result"]["saison"]>
 export type SaisonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   licences?: boolean | Prisma.Saison$licencesArgs<ExtArgs>
   _count?: boolean | Prisma.SaisonCountOutputTypeDefaultArgs<ExtArgs>
@@ -527,12 +522,13 @@ export type $SaisonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     licences: Prisma.$LicencePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
+    id: string
     code: string
     debut: Date
     fin: Date
     inscriptionDebut: Date
     inscriptionFin: Date
+    enCours: boolean
   }, ExtArgs["result"]["saison"]>
   composites: {}
 }
@@ -957,12 +953,13 @@ export interface Prisma__SaisonClient<T, Null = never, ExtArgs extends runtime.T
  * Fields of the Saison model
  */
 export interface SaisonFieldRefs {
-  readonly id: Prisma.FieldRef<"Saison", 'Int'>
+  readonly id: Prisma.FieldRef<"Saison", 'String'>
   readonly code: Prisma.FieldRef<"Saison", 'String'>
   readonly debut: Prisma.FieldRef<"Saison", 'DateTime'>
   readonly fin: Prisma.FieldRef<"Saison", 'DateTime'>
   readonly inscriptionDebut: Prisma.FieldRef<"Saison", 'DateTime'>
   readonly inscriptionFin: Prisma.FieldRef<"Saison", 'DateTime'>
+  readonly enCours: Prisma.FieldRef<"Saison", 'Boolean'>
 }
     
 

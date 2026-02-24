@@ -8,7 +8,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // OK pour dev / MVP
+  provider = "postgresql"
 }
 
 // ==============================
@@ -49,10 +49,10 @@ enum LienResponsable {
 // ==============================
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String  @id @default(uuid()) @db.Uuid
   nom       String
   prenom    String
-  email     String   @unique
+  email     String  @unique
   telephone String?
   role      Role
 
@@ -60,38 +60,48 @@ model User {
 }
 
 model Joueur {
-  id              Int       @id @default(autoincrement())
-  nom             String
-  prenom          String
-  dateNaissance   DateTime
-  lieuNaissance   String?
-  nationalite     String?
-  sexe            String?   // M / F
-  photo           String?   // URL ou chemin
-  signature       String?   // URL ou chemin
+  id            String   @id @default(uuid()) @db.Uuid
+  nom           String
+  prenom        String
+  email         String?
+  telephone     String
+  dateNaissance DateTime
+  lieuNaissance String
+  nationalite   String
+  sexe          String
+  photo         String?
+  signature     String?
+  pieceIdentite       String?
+  certificatMedical   String?
 
-  responsables    Responsable[]
-  licences        Licence[]
+  // Numéro de licence unique par joueur (attribué lors de la première validation)
+  // Format: FIK-YYYY-XXXXXX (ex: FIK-2024-123456)
+  numeroLicence String? @unique
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  responsables Responsable[]
+  licences     Licence[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Responsable {
-  id        Int             @id @default(autoincrement())
+  id        String          @id @default(uuid()) @db.Uuid
   nom       String
   prenom    String
+  telephone String
+  email     String?
   lien      LienResponsable
 
-  joueurId Int
-  joueur   Joueur          @relation(fields: [joueurId], references: [id], onDelete: Cascade)
+  joueurId String @db.Uuid
+  joueur   Joueur @relation(fields: [joueurId], references: [id], onDelete: Cascade)
 }
 
 model Club {
-  id        Int      @id @default(autoincrement())
-  nom       String
-  ville     String?
-  pays      String?
+  id    String  @id @default(uuid()) @db.Uuid
+  nom   String
+  ville String
+  pays  String
 
   licencesActuelles   Licence[] @relation("ClubActuel")
   licencesPrecedentes Licence[] @relation("ClubPrecedent")
@@ -100,67 +110,69 @@ model Club {
 }
 
 model Saison {
-  id                Int      @id @default(autoincrement())
-  code              String   @unique  // ex: 2024-2025
-  debut             DateTime
-  fin               DateTime
+  id    String   @id @default(uuid()) @db.Uuid
+  code  String   @unique // ex: 2024-2025
+  debut DateTime
+  fin   DateTime
 
   // Période pour saisir les licences
-  inscriptionDebut  DateTime
-  inscriptionFin    DateTime
+  inscriptionDebut DateTime
+  inscriptionFin   DateTime
 
-  licences          Licence[]
+  // Saison en cours pour les inscriptions
+  enCours Boolean @default(false)
+
+  licences Licence[]
 }
 
 model Licence {
-  id                Int           @id @default(autoincrement())
+  id String @id @default(uuid()) @db.Uuid
 
-  joueurId          Int
-  joueur            Joueur        @relation(fields: [joueurId], references: [id], onDelete: Cascade)
+  joueurId String @db.Uuid
+  joueur   Joueur @relation(fields: [joueurId], references: [id], onDelete: Cascade)
 
-  saisonId          Int
-  saison            Saison        @relation(fields: [saisonId], references: [id])
+  saisonId String @db.Uuid
+  saison   Saison @relation(fields: [saisonId], references: [id])
 
-  clubPrecedentId   Int?
-  clubPrecedent     Club?         @relation("ClubPrecedent", fields: [clubPrecedentId], references: [id])
+  clubPrecedentId String? @db.Uuid
+  clubPrecedent   Club?   @relation("ClubPrecedent", fields: [clubPrecedentId], references: [id])
 
-  clubActuelId      Int?
-  clubActuel        Club?         @relation("ClubActuel", fields: [clubActuelId], references: [id])
+  clubActuelId String? @db.Uuid
+  clubActuel   Club?   @relation("ClubActuel", fields: [clubActuelId], references: [id])
 
-  numeroLicence     Int?           @unique
-  type              TypeLicence
-  statut            StatutLicence  @default(BROUILLON)
+  type          TypeLicence
+  statut        StatutLicence @default(BROUILLON)
 
-  paiement          Paiement?
+  paiement Paiement?
 
-  dateValidation    DateTime?
-  commentaireAdmin  String?
+  dateValidation   DateTime?
+  commentaireAdmin String?
 
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([joueurId, saisonId])
 }
 
 model Paiement {
-  id              Int            @id @default(autoincrement())
+  id String @id @default(uuid()) @db.Uuid
 
   // --- CinetPay ---
-  provider        String         @default("CINETPAY")
-  transactionId   String         @unique   // ID retourné par CinetPay
-  reference       String         @unique   // référence interne
-  montant         Float
-  devise          String         @default("XOF")
-  statut          StatutPaiement @default(EN_ATTENTE)
+  provider      String         @default("CINETPAY")
+  transactionId String         @unique // ID retourné par CinetPay
+  reference     String         @unique // référence interne
+  montant       Float
+  devise        String         @default("XOF")
+  statut        StatutPaiement @default(EN_ATTENTE)
 
   // --- Relations ---
-  licenceId       Int            @unique
-  licence         Licence        @relation(fields: [licenceId], references: [id], onDelete: Cascade)
+  licenceId String  @unique @db.Uuid
+  licence   Licence @relation(fields: [licenceId], references: [id], onDelete: Cascade)
 
   // --- Meta ---
-  paymentUrl      String?        // lien de paiement CinetPay
-  rawResponse     String?        // JSON string optionnel
+  paymentUrl  String? // lien de paiement CinetPay
+  rawResponse String? // JSON string optionnel
 
-  createdAt       DateTime       @default(now())
-  paidAt          DateTime?
+  createdAt DateTime  @default(now())
+  paidAt    DateTime?
 }

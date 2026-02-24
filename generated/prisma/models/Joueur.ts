@@ -20,44 +20,44 @@ export type JoueurModel = runtime.Types.Result.DefaultSelection<Prisma.$JoueurPa
 
 export type AggregateJoueur = {
   _count: JoueurCountAggregateOutputType | null
-  _avg: JoueurAvgAggregateOutputType | null
-  _sum: JoueurSumAggregateOutputType | null
   _min: JoueurMinAggregateOutputType | null
   _max: JoueurMaxAggregateOutputType | null
 }
 
-export type JoueurAvgAggregateOutputType = {
-  id: number | null
-}
-
-export type JoueurSumAggregateOutputType = {
-  id: number | null
-}
-
 export type JoueurMinAggregateOutputType = {
-  id: number | null
+  id: string | null
   nom: string | null
   prenom: string | null
+  email: string | null
+  telephone: string | null
   dateNaissance: Date | null
   lieuNaissance: string | null
   nationalite: string | null
   sexe: string | null
   photo: string | null
   signature: string | null
+  pieceIdentite: string | null
+  certificatMedical: string | null
+  numeroLicence: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type JoueurMaxAggregateOutputType = {
-  id: number | null
+  id: string | null
   nom: string | null
   prenom: string | null
+  email: string | null
+  telephone: string | null
   dateNaissance: Date | null
   lieuNaissance: string | null
   nationalite: string | null
   sexe: string | null
   photo: string | null
   signature: string | null
+  pieceIdentite: string | null
+  certificatMedical: string | null
+  numeroLicence: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,36 +66,38 @@ export type JoueurCountAggregateOutputType = {
   id: number
   nom: number
   prenom: number
+  email: number
+  telephone: number
   dateNaissance: number
   lieuNaissance: number
   nationalite: number
   sexe: number
   photo: number
   signature: number
+  pieceIdentite: number
+  certificatMedical: number
+  numeroLicence: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
 
-export type JoueurAvgAggregateInputType = {
-  id?: true
-}
-
-export type JoueurSumAggregateInputType = {
-  id?: true
-}
-
 export type JoueurMinAggregateInputType = {
   id?: true
   nom?: true
   prenom?: true
+  email?: true
+  telephone?: true
   dateNaissance?: true
   lieuNaissance?: true
   nationalite?: true
   sexe?: true
   photo?: true
   signature?: true
+  pieceIdentite?: true
+  certificatMedical?: true
+  numeroLicence?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -104,12 +106,17 @@ export type JoueurMaxAggregateInputType = {
   id?: true
   nom?: true
   prenom?: true
+  email?: true
+  telephone?: true
   dateNaissance?: true
   lieuNaissance?: true
   nationalite?: true
   sexe?: true
   photo?: true
   signature?: true
+  pieceIdentite?: true
+  certificatMedical?: true
+  numeroLicence?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -118,12 +125,17 @@ export type JoueurCountAggregateInputType = {
   id?: true
   nom?: true
   prenom?: true
+  email?: true
+  telephone?: true
   dateNaissance?: true
   lieuNaissance?: true
   nationalite?: true
   sexe?: true
   photo?: true
   signature?: true
+  pieceIdentite?: true
+  certificatMedical?: true
+  numeroLicence?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -167,18 +179,6 @@ export type JoueurAggregateArgs<ExtArgs extends runtime.Types.Extensions.Interna
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: JoueurAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: JoueurSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: JoueurMinAggregateInputType
@@ -209,27 +209,28 @@ export type JoueurGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   _count?: JoueurCountAggregateInputType | true
-  _avg?: JoueurAvgAggregateInputType
-  _sum?: JoueurSumAggregateInputType
   _min?: JoueurMinAggregateInputType
   _max?: JoueurMaxAggregateInputType
 }
 
 export type JoueurGroupByOutputType = {
-  id: number
+  id: string
   nom: string
   prenom: string
+  email: string | null
+  telephone: string
   dateNaissance: Date
-  lieuNaissance: string | null
-  nationalite: string | null
-  sexe: string | null
+  lieuNaissance: string
+  nationalite: string
+  sexe: string
   photo: string | null
   signature: string | null
+  pieceIdentite: string | null
+  certificatMedical: string | null
+  numeroLicence: string | null
   createdAt: Date
   updatedAt: Date
   _count: JoueurCountAggregateOutputType | null
-  _avg: JoueurAvgAggregateOutputType | null
-  _sum: JoueurSumAggregateOutputType | null
   _min: JoueurMinAggregateOutputType | null
   _max: JoueurMaxAggregateOutputType | null
 }
@@ -253,15 +254,20 @@ export type JoueurWhereInput = {
   AND?: Prisma.JoueurWhereInput | Prisma.JoueurWhereInput[]
   OR?: Prisma.JoueurWhereInput[]
   NOT?: Prisma.JoueurWhereInput | Prisma.JoueurWhereInput[]
-  id?: Prisma.IntFilter<"Joueur"> | number
+  id?: Prisma.UuidFilter<"Joueur"> | string
   nom?: Prisma.StringFilter<"Joueur"> | string
   prenom?: Prisma.StringFilter<"Joueur"> | string
+  email?: Prisma.StringNullableFilter<"Joueur"> | string | null
+  telephone?: Prisma.StringFilter<"Joueur"> | string
   dateNaissance?: Prisma.DateTimeFilter<"Joueur"> | Date | string
-  lieuNaissance?: Prisma.StringNullableFilter<"Joueur"> | string | null
-  nationalite?: Prisma.StringNullableFilter<"Joueur"> | string | null
-  sexe?: Prisma.StringNullableFilter<"Joueur"> | string | null
+  lieuNaissance?: Prisma.StringFilter<"Joueur"> | string
+  nationalite?: Prisma.StringFilter<"Joueur"> | string
+  sexe?: Prisma.StringFilter<"Joueur"> | string
   photo?: Prisma.StringNullableFilter<"Joueur"> | string | null
   signature?: Prisma.StringNullableFilter<"Joueur"> | string | null
+  pieceIdentite?: Prisma.StringNullableFilter<"Joueur"> | string | null
+  certificatMedical?: Prisma.StringNullableFilter<"Joueur"> | string | null
+  numeroLicence?: Prisma.StringNullableFilter<"Joueur"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Joueur"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Joueur"> | Date | string
   responsables?: Prisma.ResponsableListRelationFilter
@@ -272,12 +278,17 @@ export type JoueurOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   nom?: Prisma.SortOrder
   prenom?: Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
+  telephone?: Prisma.SortOrder
   dateNaissance?: Prisma.SortOrder
-  lieuNaissance?: Prisma.SortOrderInput | Prisma.SortOrder
-  nationalite?: Prisma.SortOrderInput | Prisma.SortOrder
-  sexe?: Prisma.SortOrderInput | Prisma.SortOrder
+  lieuNaissance?: Prisma.SortOrder
+  nationalite?: Prisma.SortOrder
+  sexe?: Prisma.SortOrder
   photo?: Prisma.SortOrderInput | Prisma.SortOrder
   signature?: Prisma.SortOrderInput | Prisma.SortOrder
+  pieceIdentite?: Prisma.SortOrderInput | Prisma.SortOrder
+  certificatMedical?: Prisma.SortOrderInput | Prisma.SortOrder
+  numeroLicence?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   responsables?: Prisma.ResponsableOrderByRelationAggregateInput
@@ -285,69 +296,88 @@ export type JoueurOrderByWithRelationInput = {
 }
 
 export type JoueurWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
+  id?: string
+  numeroLicence?: string
   AND?: Prisma.JoueurWhereInput | Prisma.JoueurWhereInput[]
   OR?: Prisma.JoueurWhereInput[]
   NOT?: Prisma.JoueurWhereInput | Prisma.JoueurWhereInput[]
   nom?: Prisma.StringFilter<"Joueur"> | string
   prenom?: Prisma.StringFilter<"Joueur"> | string
+  email?: Prisma.StringNullableFilter<"Joueur"> | string | null
+  telephone?: Prisma.StringFilter<"Joueur"> | string
   dateNaissance?: Prisma.DateTimeFilter<"Joueur"> | Date | string
-  lieuNaissance?: Prisma.StringNullableFilter<"Joueur"> | string | null
-  nationalite?: Prisma.StringNullableFilter<"Joueur"> | string | null
-  sexe?: Prisma.StringNullableFilter<"Joueur"> | string | null
+  lieuNaissance?: Prisma.StringFilter<"Joueur"> | string
+  nationalite?: Prisma.StringFilter<"Joueur"> | string
+  sexe?: Prisma.StringFilter<"Joueur"> | string
   photo?: Prisma.StringNullableFilter<"Joueur"> | string | null
   signature?: Prisma.StringNullableFilter<"Joueur"> | string | null
+  pieceIdentite?: Prisma.StringNullableFilter<"Joueur"> | string | null
+  certificatMedical?: Prisma.StringNullableFilter<"Joueur"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Joueur"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Joueur"> | Date | string
   responsables?: Prisma.ResponsableListRelationFilter
   licences?: Prisma.LicenceListRelationFilter
-}, "id">
+}, "id" | "numeroLicence">
 
 export type JoueurOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   nom?: Prisma.SortOrder
   prenom?: Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
+  telephone?: Prisma.SortOrder
   dateNaissance?: Prisma.SortOrder
-  lieuNaissance?: Prisma.SortOrderInput | Prisma.SortOrder
-  nationalite?: Prisma.SortOrderInput | Prisma.SortOrder
-  sexe?: Prisma.SortOrderInput | Prisma.SortOrder
+  lieuNaissance?: Prisma.SortOrder
+  nationalite?: Prisma.SortOrder
+  sexe?: Prisma.SortOrder
   photo?: Prisma.SortOrderInput | Prisma.SortOrder
   signature?: Prisma.SortOrderInput | Prisma.SortOrder
+  pieceIdentite?: Prisma.SortOrderInput | Prisma.SortOrder
+  certificatMedical?: Prisma.SortOrderInput | Prisma.SortOrder
+  numeroLicence?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.JoueurCountOrderByAggregateInput
-  _avg?: Prisma.JoueurAvgOrderByAggregateInput
   _max?: Prisma.JoueurMaxOrderByAggregateInput
   _min?: Prisma.JoueurMinOrderByAggregateInput
-  _sum?: Prisma.JoueurSumOrderByAggregateInput
 }
 
 export type JoueurScalarWhereWithAggregatesInput = {
   AND?: Prisma.JoueurScalarWhereWithAggregatesInput | Prisma.JoueurScalarWhereWithAggregatesInput[]
   OR?: Prisma.JoueurScalarWhereWithAggregatesInput[]
   NOT?: Prisma.JoueurScalarWhereWithAggregatesInput | Prisma.JoueurScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"Joueur"> | number
+  id?: Prisma.UuidWithAggregatesFilter<"Joueur"> | string
   nom?: Prisma.StringWithAggregatesFilter<"Joueur"> | string
   prenom?: Prisma.StringWithAggregatesFilter<"Joueur"> | string
+  email?: Prisma.StringNullableWithAggregatesFilter<"Joueur"> | string | null
+  telephone?: Prisma.StringWithAggregatesFilter<"Joueur"> | string
   dateNaissance?: Prisma.DateTimeWithAggregatesFilter<"Joueur"> | Date | string
-  lieuNaissance?: Prisma.StringNullableWithAggregatesFilter<"Joueur"> | string | null
-  nationalite?: Prisma.StringNullableWithAggregatesFilter<"Joueur"> | string | null
-  sexe?: Prisma.StringNullableWithAggregatesFilter<"Joueur"> | string | null
+  lieuNaissance?: Prisma.StringWithAggregatesFilter<"Joueur"> | string
+  nationalite?: Prisma.StringWithAggregatesFilter<"Joueur"> | string
+  sexe?: Prisma.StringWithAggregatesFilter<"Joueur"> | string
   photo?: Prisma.StringNullableWithAggregatesFilter<"Joueur"> | string | null
   signature?: Prisma.StringNullableWithAggregatesFilter<"Joueur"> | string | null
+  pieceIdentite?: Prisma.StringNullableWithAggregatesFilter<"Joueur"> | string | null
+  certificatMedical?: Prisma.StringNullableWithAggregatesFilter<"Joueur"> | string | null
+  numeroLicence?: Prisma.StringNullableWithAggregatesFilter<"Joueur"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Joueur"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Joueur"> | Date | string
 }
 
 export type JoueurCreateInput = {
+  id?: string
   nom: string
   prenom: string
+  email?: string | null
+  telephone: string
   dateNaissance: Date | string
-  lieuNaissance?: string | null
-  nationalite?: string | null
-  sexe?: string | null
+  lieuNaissance: string
+  nationalite: string
+  sexe: string
   photo?: string | null
   signature?: string | null
+  pieceIdentite?: string | null
+  certificatMedical?: string | null
+  numeroLicence?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   responsables?: Prisma.ResponsableCreateNestedManyWithoutJoueurInput
@@ -355,15 +385,20 @@ export type JoueurCreateInput = {
 }
 
 export type JoueurUncheckedCreateInput = {
-  id?: number
+  id?: string
   nom: string
   prenom: string
+  email?: string | null
+  telephone: string
   dateNaissance: Date | string
-  lieuNaissance?: string | null
-  nationalite?: string | null
-  sexe?: string | null
+  lieuNaissance: string
+  nationalite: string
+  sexe: string
   photo?: string | null
   signature?: string | null
+  pieceIdentite?: string | null
+  certificatMedical?: string | null
+  numeroLicence?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   responsables?: Prisma.ResponsableUncheckedCreateNestedManyWithoutJoueurInput
@@ -371,14 +406,20 @@ export type JoueurUncheckedCreateInput = {
 }
 
 export type JoueurUpdateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
   dateNaissance?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lieuNaissance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nationalite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sexe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lieuNaissance?: Prisma.StringFieldUpdateOperationsInput | string
+  nationalite?: Prisma.StringFieldUpdateOperationsInput | string
+  sexe?: Prisma.StringFieldUpdateOperationsInput | string
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signature?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pieceIdentite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  certificatMedical?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  numeroLicence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   responsables?: Prisma.ResponsableUpdateManyWithoutJoueurNestedInput
@@ -386,15 +427,20 @@ export type JoueurUpdateInput = {
 }
 
 export type JoueurUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
   dateNaissance?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lieuNaissance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nationalite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sexe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lieuNaissance?: Prisma.StringFieldUpdateOperationsInput | string
+  nationalite?: Prisma.StringFieldUpdateOperationsInput | string
+  sexe?: Prisma.StringFieldUpdateOperationsInput | string
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signature?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pieceIdentite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  certificatMedical?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  numeroLicence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   responsables?: Prisma.ResponsableUncheckedUpdateManyWithoutJoueurNestedInput
@@ -402,42 +448,58 @@ export type JoueurUncheckedUpdateInput = {
 }
 
 export type JoueurCreateManyInput = {
-  id?: number
+  id?: string
   nom: string
   prenom: string
+  email?: string | null
+  telephone: string
   dateNaissance: Date | string
-  lieuNaissance?: string | null
-  nationalite?: string | null
-  sexe?: string | null
+  lieuNaissance: string
+  nationalite: string
+  sexe: string
   photo?: string | null
   signature?: string | null
+  pieceIdentite?: string | null
+  certificatMedical?: string | null
+  numeroLicence?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type JoueurUpdateManyMutationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
   dateNaissance?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lieuNaissance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nationalite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sexe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lieuNaissance?: Prisma.StringFieldUpdateOperationsInput | string
+  nationalite?: Prisma.StringFieldUpdateOperationsInput | string
+  sexe?: Prisma.StringFieldUpdateOperationsInput | string
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signature?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pieceIdentite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  certificatMedical?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  numeroLicence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type JoueurUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
   dateNaissance?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lieuNaissance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nationalite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sexe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lieuNaissance?: Prisma.StringFieldUpdateOperationsInput | string
+  nationalite?: Prisma.StringFieldUpdateOperationsInput | string
+  sexe?: Prisma.StringFieldUpdateOperationsInput | string
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signature?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pieceIdentite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  certificatMedical?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  numeroLicence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -446,30 +508,36 @@ export type JoueurCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nom?: Prisma.SortOrder
   prenom?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  telephone?: Prisma.SortOrder
   dateNaissance?: Prisma.SortOrder
   lieuNaissance?: Prisma.SortOrder
   nationalite?: Prisma.SortOrder
   sexe?: Prisma.SortOrder
   photo?: Prisma.SortOrder
   signature?: Prisma.SortOrder
+  pieceIdentite?: Prisma.SortOrder
+  certificatMedical?: Prisma.SortOrder
+  numeroLicence?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type JoueurAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
 }
 
 export type JoueurMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nom?: Prisma.SortOrder
   prenom?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  telephone?: Prisma.SortOrder
   dateNaissance?: Prisma.SortOrder
   lieuNaissance?: Prisma.SortOrder
   nationalite?: Prisma.SortOrder
   sexe?: Prisma.SortOrder
   photo?: Prisma.SortOrder
   signature?: Prisma.SortOrder
+  pieceIdentite?: Prisma.SortOrder
+  certificatMedical?: Prisma.SortOrder
+  numeroLicence?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -478,18 +546,19 @@ export type JoueurMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nom?: Prisma.SortOrder
   prenom?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  telephone?: Prisma.SortOrder
   dateNaissance?: Prisma.SortOrder
   lieuNaissance?: Prisma.SortOrder
   nationalite?: Prisma.SortOrder
   sexe?: Prisma.SortOrder
   photo?: Prisma.SortOrder
   signature?: Prisma.SortOrder
+  pieceIdentite?: Prisma.SortOrder
+  certificatMedical?: Prisma.SortOrder
+  numeroLicence?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type JoueurSumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
 }
 
 export type JoueurScalarRelationFilter = {
@@ -526,29 +595,40 @@ export type JoueurUpdateOneRequiredWithoutLicencesNestedInput = {
 }
 
 export type JoueurCreateWithoutResponsablesInput = {
+  id?: string
   nom: string
   prenom: string
+  email?: string | null
+  telephone: string
   dateNaissance: Date | string
-  lieuNaissance?: string | null
-  nationalite?: string | null
-  sexe?: string | null
+  lieuNaissance: string
+  nationalite: string
+  sexe: string
   photo?: string | null
   signature?: string | null
+  pieceIdentite?: string | null
+  certificatMedical?: string | null
+  numeroLicence?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   licences?: Prisma.LicenceCreateNestedManyWithoutJoueurInput
 }
 
 export type JoueurUncheckedCreateWithoutResponsablesInput = {
-  id?: number
+  id?: string
   nom: string
   prenom: string
+  email?: string | null
+  telephone: string
   dateNaissance: Date | string
-  lieuNaissance?: string | null
-  nationalite?: string | null
-  sexe?: string | null
+  lieuNaissance: string
+  nationalite: string
+  sexe: string
   photo?: string | null
   signature?: string | null
+  pieceIdentite?: string | null
+  certificatMedical?: string | null
+  numeroLicence?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   licences?: Prisma.LicenceUncheckedCreateNestedManyWithoutJoueurInput
@@ -571,58 +651,80 @@ export type JoueurUpdateToOneWithWhereWithoutResponsablesInput = {
 }
 
 export type JoueurUpdateWithoutResponsablesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
   dateNaissance?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lieuNaissance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nationalite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sexe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lieuNaissance?: Prisma.StringFieldUpdateOperationsInput | string
+  nationalite?: Prisma.StringFieldUpdateOperationsInput | string
+  sexe?: Prisma.StringFieldUpdateOperationsInput | string
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signature?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pieceIdentite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  certificatMedical?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  numeroLicence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   licences?: Prisma.LicenceUpdateManyWithoutJoueurNestedInput
 }
 
 export type JoueurUncheckedUpdateWithoutResponsablesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
   dateNaissance?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lieuNaissance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nationalite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sexe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lieuNaissance?: Prisma.StringFieldUpdateOperationsInput | string
+  nationalite?: Prisma.StringFieldUpdateOperationsInput | string
+  sexe?: Prisma.StringFieldUpdateOperationsInput | string
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signature?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pieceIdentite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  certificatMedical?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  numeroLicence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   licences?: Prisma.LicenceUncheckedUpdateManyWithoutJoueurNestedInput
 }
 
 export type JoueurCreateWithoutLicencesInput = {
+  id?: string
   nom: string
   prenom: string
+  email?: string | null
+  telephone: string
   dateNaissance: Date | string
-  lieuNaissance?: string | null
-  nationalite?: string | null
-  sexe?: string | null
+  lieuNaissance: string
+  nationalite: string
+  sexe: string
   photo?: string | null
   signature?: string | null
+  pieceIdentite?: string | null
+  certificatMedical?: string | null
+  numeroLicence?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   responsables?: Prisma.ResponsableCreateNestedManyWithoutJoueurInput
 }
 
 export type JoueurUncheckedCreateWithoutLicencesInput = {
-  id?: number
+  id?: string
   nom: string
   prenom: string
+  email?: string | null
+  telephone: string
   dateNaissance: Date | string
-  lieuNaissance?: string | null
-  nationalite?: string | null
-  sexe?: string | null
+  lieuNaissance: string
+  nationalite: string
+  sexe: string
   photo?: string | null
   signature?: string | null
+  pieceIdentite?: string | null
+  certificatMedical?: string | null
+  numeroLicence?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   responsables?: Prisma.ResponsableUncheckedCreateNestedManyWithoutJoueurInput
@@ -645,29 +747,40 @@ export type JoueurUpdateToOneWithWhereWithoutLicencesInput = {
 }
 
 export type JoueurUpdateWithoutLicencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
   dateNaissance?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lieuNaissance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nationalite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sexe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lieuNaissance?: Prisma.StringFieldUpdateOperationsInput | string
+  nationalite?: Prisma.StringFieldUpdateOperationsInput | string
+  sexe?: Prisma.StringFieldUpdateOperationsInput | string
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signature?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pieceIdentite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  certificatMedical?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  numeroLicence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   responsables?: Prisma.ResponsableUpdateManyWithoutJoueurNestedInput
 }
 
 export type JoueurUncheckedUpdateWithoutLicencesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
   dateNaissance?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lieuNaissance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nationalite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sexe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lieuNaissance?: Prisma.StringFieldUpdateOperationsInput | string
+  nationalite?: Prisma.StringFieldUpdateOperationsInput | string
+  sexe?: Prisma.StringFieldUpdateOperationsInput | string
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signature?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pieceIdentite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  certificatMedical?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  numeroLicence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   responsables?: Prisma.ResponsableUncheckedUpdateManyWithoutJoueurNestedInput
@@ -717,12 +830,17 @@ export type JoueurSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   id?: boolean
   nom?: boolean
   prenom?: boolean
+  email?: boolean
+  telephone?: boolean
   dateNaissance?: boolean
   lieuNaissance?: boolean
   nationalite?: boolean
   sexe?: boolean
   photo?: boolean
   signature?: boolean
+  pieceIdentite?: boolean
+  certificatMedical?: boolean
+  numeroLicence?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   responsables?: boolean | Prisma.Joueur$responsablesArgs<ExtArgs>
@@ -734,12 +852,17 @@ export type JoueurSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   nom?: boolean
   prenom?: boolean
+  email?: boolean
+  telephone?: boolean
   dateNaissance?: boolean
   lieuNaissance?: boolean
   nationalite?: boolean
   sexe?: boolean
   photo?: boolean
   signature?: boolean
+  pieceIdentite?: boolean
+  certificatMedical?: boolean
+  numeroLicence?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["joueur"]>
@@ -748,12 +871,17 @@ export type JoueurSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   nom?: boolean
   prenom?: boolean
+  email?: boolean
+  telephone?: boolean
   dateNaissance?: boolean
   lieuNaissance?: boolean
   nationalite?: boolean
   sexe?: boolean
   photo?: boolean
   signature?: boolean
+  pieceIdentite?: boolean
+  certificatMedical?: boolean
+  numeroLicence?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["joueur"]>
@@ -762,17 +890,22 @@ export type JoueurSelectScalar = {
   id?: boolean
   nom?: boolean
   prenom?: boolean
+  email?: boolean
+  telephone?: boolean
   dateNaissance?: boolean
   lieuNaissance?: boolean
   nationalite?: boolean
   sexe?: boolean
   photo?: boolean
   signature?: boolean
+  pieceIdentite?: boolean
+  certificatMedical?: boolean
+  numeroLicence?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type JoueurOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nom" | "prenom" | "dateNaissance" | "lieuNaissance" | "nationalite" | "sexe" | "photo" | "signature" | "createdAt" | "updatedAt", ExtArgs["result"]["joueur"]>
+export type JoueurOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nom" | "prenom" | "email" | "telephone" | "dateNaissance" | "lieuNaissance" | "nationalite" | "sexe" | "photo" | "signature" | "pieceIdentite" | "certificatMedical" | "numeroLicence" | "createdAt" | "updatedAt", ExtArgs["result"]["joueur"]>
 export type JoueurInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   responsables?: boolean | Prisma.Joueur$responsablesArgs<ExtArgs>
   licences?: boolean | Prisma.Joueur$licencesArgs<ExtArgs>
@@ -788,15 +921,20 @@ export type $JoueurPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     licences: Prisma.$LicencePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
+    id: string
     nom: string
     prenom: string
+    email: string | null
+    telephone: string
     dateNaissance: Date
-    lieuNaissance: string | null
-    nationalite: string | null
-    sexe: string | null
+    lieuNaissance: string
+    nationalite: string
+    sexe: string
     photo: string | null
     signature: string | null
+    pieceIdentite: string | null
+    certificatMedical: string | null
+    numeroLicence: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["joueur"]>
@@ -1224,15 +1362,20 @@ export interface Prisma__JoueurClient<T, Null = never, ExtArgs extends runtime.T
  * Fields of the Joueur model
  */
 export interface JoueurFieldRefs {
-  readonly id: Prisma.FieldRef<"Joueur", 'Int'>
+  readonly id: Prisma.FieldRef<"Joueur", 'String'>
   readonly nom: Prisma.FieldRef<"Joueur", 'String'>
   readonly prenom: Prisma.FieldRef<"Joueur", 'String'>
+  readonly email: Prisma.FieldRef<"Joueur", 'String'>
+  readonly telephone: Prisma.FieldRef<"Joueur", 'String'>
   readonly dateNaissance: Prisma.FieldRef<"Joueur", 'DateTime'>
   readonly lieuNaissance: Prisma.FieldRef<"Joueur", 'String'>
   readonly nationalite: Prisma.FieldRef<"Joueur", 'String'>
   readonly sexe: Prisma.FieldRef<"Joueur", 'String'>
   readonly photo: Prisma.FieldRef<"Joueur", 'String'>
   readonly signature: Prisma.FieldRef<"Joueur", 'String'>
+  readonly pieceIdentite: Prisma.FieldRef<"Joueur", 'String'>
+  readonly certificatMedical: Prisma.FieldRef<"Joueur", 'String'>
+  readonly numeroLicence: Prisma.FieldRef<"Joueur", 'String'>
   readonly createdAt: Prisma.FieldRef<"Joueur", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Joueur", 'DateTime'>
 }

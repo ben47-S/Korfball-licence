@@ -20,62 +20,48 @@ export type ResponsableModel = runtime.Types.Result.DefaultSelection<Prisma.$Res
 
 export type AggregateResponsable = {
   _count: ResponsableCountAggregateOutputType | null
-  _avg: ResponsableAvgAggregateOutputType | null
-  _sum: ResponsableSumAggregateOutputType | null
   _min: ResponsableMinAggregateOutputType | null
   _max: ResponsableMaxAggregateOutputType | null
 }
 
-export type ResponsableAvgAggregateOutputType = {
-  id: number | null
-  joueurId: number | null
-}
-
-export type ResponsableSumAggregateOutputType = {
-  id: number | null
-  joueurId: number | null
-}
-
 export type ResponsableMinAggregateOutputType = {
-  id: number | null
+  id: string | null
   nom: string | null
   prenom: string | null
+  telephone: string | null
+  email: string | null
   lien: $Enums.LienResponsable | null
-  joueurId: number | null
+  joueurId: string | null
 }
 
 export type ResponsableMaxAggregateOutputType = {
-  id: number | null
+  id: string | null
   nom: string | null
   prenom: string | null
+  telephone: string | null
+  email: string | null
   lien: $Enums.LienResponsable | null
-  joueurId: number | null
+  joueurId: string | null
 }
 
 export type ResponsableCountAggregateOutputType = {
   id: number
   nom: number
   prenom: number
+  telephone: number
+  email: number
   lien: number
   joueurId: number
   _all: number
 }
 
 
-export type ResponsableAvgAggregateInputType = {
-  id?: true
-  joueurId?: true
-}
-
-export type ResponsableSumAggregateInputType = {
-  id?: true
-  joueurId?: true
-}
-
 export type ResponsableMinAggregateInputType = {
   id?: true
   nom?: true
   prenom?: true
+  telephone?: true
+  email?: true
   lien?: true
   joueurId?: true
 }
@@ -84,6 +70,8 @@ export type ResponsableMaxAggregateInputType = {
   id?: true
   nom?: true
   prenom?: true
+  telephone?: true
+  email?: true
   lien?: true
   joueurId?: true
 }
@@ -92,6 +80,8 @@ export type ResponsableCountAggregateInputType = {
   id?: true
   nom?: true
   prenom?: true
+  telephone?: true
+  email?: true
   lien?: true
   joueurId?: true
   _all?: true
@@ -135,18 +125,6 @@ export type ResponsableAggregateArgs<ExtArgs extends runtime.Types.Extensions.In
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: ResponsableAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: ResponsableSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: ResponsableMinAggregateInputType
@@ -177,21 +155,19 @@ export type ResponsableGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   _count?: ResponsableCountAggregateInputType | true
-  _avg?: ResponsableAvgAggregateInputType
-  _sum?: ResponsableSumAggregateInputType
   _min?: ResponsableMinAggregateInputType
   _max?: ResponsableMaxAggregateInputType
 }
 
 export type ResponsableGroupByOutputType = {
-  id: number
+  id: string
   nom: string
   prenom: string
+  telephone: string
+  email: string | null
   lien: $Enums.LienResponsable
-  joueurId: number
+  joueurId: string
   _count: ResponsableCountAggregateOutputType | null
-  _avg: ResponsableAvgAggregateOutputType | null
-  _sum: ResponsableSumAggregateOutputType | null
   _min: ResponsableMinAggregateOutputType | null
   _max: ResponsableMaxAggregateOutputType | null
 }
@@ -215,11 +191,13 @@ export type ResponsableWhereInput = {
   AND?: Prisma.ResponsableWhereInput | Prisma.ResponsableWhereInput[]
   OR?: Prisma.ResponsableWhereInput[]
   NOT?: Prisma.ResponsableWhereInput | Prisma.ResponsableWhereInput[]
-  id?: Prisma.IntFilter<"Responsable"> | number
+  id?: Prisma.UuidFilter<"Responsable"> | string
   nom?: Prisma.StringFilter<"Responsable"> | string
   prenom?: Prisma.StringFilter<"Responsable"> | string
+  telephone?: Prisma.StringFilter<"Responsable"> | string
+  email?: Prisma.StringNullableFilter<"Responsable"> | string | null
   lien?: Prisma.EnumLienResponsableFilter<"Responsable"> | $Enums.LienResponsable
-  joueurId?: Prisma.IntFilter<"Responsable"> | number
+  joueurId?: Prisma.UuidFilter<"Responsable"> | string
   joueur?: Prisma.XOR<Prisma.JoueurScalarRelationFilter, Prisma.JoueurWhereInput>
 }
 
@@ -227,20 +205,24 @@ export type ResponsableOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   nom?: Prisma.SortOrder
   prenom?: Prisma.SortOrder
+  telephone?: Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
   lien?: Prisma.SortOrder
   joueurId?: Prisma.SortOrder
   joueur?: Prisma.JoueurOrderByWithRelationInput
 }
 
 export type ResponsableWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
+  id?: string
   AND?: Prisma.ResponsableWhereInput | Prisma.ResponsableWhereInput[]
   OR?: Prisma.ResponsableWhereInput[]
   NOT?: Prisma.ResponsableWhereInput | Prisma.ResponsableWhereInput[]
   nom?: Prisma.StringFilter<"Responsable"> | string
   prenom?: Prisma.StringFilter<"Responsable"> | string
+  telephone?: Prisma.StringFilter<"Responsable"> | string
+  email?: Prisma.StringNullableFilter<"Responsable"> | string | null
   lien?: Prisma.EnumLienResponsableFilter<"Responsable"> | $Enums.LienResponsable
-  joueurId?: Prisma.IntFilter<"Responsable"> | number
+  joueurId?: Prisma.UuidFilter<"Responsable"> | string
   joueur?: Prisma.XOR<Prisma.JoueurScalarRelationFilter, Prisma.JoueurWhereInput>
 }, "id">
 
@@ -248,76 +230,95 @@ export type ResponsableOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   nom?: Prisma.SortOrder
   prenom?: Prisma.SortOrder
+  telephone?: Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
   lien?: Prisma.SortOrder
   joueurId?: Prisma.SortOrder
   _count?: Prisma.ResponsableCountOrderByAggregateInput
-  _avg?: Prisma.ResponsableAvgOrderByAggregateInput
   _max?: Prisma.ResponsableMaxOrderByAggregateInput
   _min?: Prisma.ResponsableMinOrderByAggregateInput
-  _sum?: Prisma.ResponsableSumOrderByAggregateInput
 }
 
 export type ResponsableScalarWhereWithAggregatesInput = {
   AND?: Prisma.ResponsableScalarWhereWithAggregatesInput | Prisma.ResponsableScalarWhereWithAggregatesInput[]
   OR?: Prisma.ResponsableScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ResponsableScalarWhereWithAggregatesInput | Prisma.ResponsableScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"Responsable"> | number
+  id?: Prisma.UuidWithAggregatesFilter<"Responsable"> | string
   nom?: Prisma.StringWithAggregatesFilter<"Responsable"> | string
   prenom?: Prisma.StringWithAggregatesFilter<"Responsable"> | string
+  telephone?: Prisma.StringWithAggregatesFilter<"Responsable"> | string
+  email?: Prisma.StringNullableWithAggregatesFilter<"Responsable"> | string | null
   lien?: Prisma.EnumLienResponsableWithAggregatesFilter<"Responsable"> | $Enums.LienResponsable
-  joueurId?: Prisma.IntWithAggregatesFilter<"Responsable"> | number
+  joueurId?: Prisma.UuidWithAggregatesFilter<"Responsable"> | string
 }
 
 export type ResponsableCreateInput = {
+  id?: string
   nom: string
   prenom: string
+  telephone: string
+  email?: string | null
   lien: $Enums.LienResponsable
   joueur: Prisma.JoueurCreateNestedOneWithoutResponsablesInput
 }
 
 export type ResponsableUncheckedCreateInput = {
-  id?: number
+  id?: string
   nom: string
   prenom: string
+  telephone: string
+  email?: string | null
   lien: $Enums.LienResponsable
-  joueurId: number
+  joueurId: string
 }
 
 export type ResponsableUpdateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lien?: Prisma.EnumLienResponsableFieldUpdateOperationsInput | $Enums.LienResponsable
   joueur?: Prisma.JoueurUpdateOneRequiredWithoutResponsablesNestedInput
 }
 
 export type ResponsableUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lien?: Prisma.EnumLienResponsableFieldUpdateOperationsInput | $Enums.LienResponsable
-  joueurId?: Prisma.IntFieldUpdateOperationsInput | number
+  joueurId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ResponsableCreateManyInput = {
-  id?: number
+  id?: string
   nom: string
   prenom: string
+  telephone: string
+  email?: string | null
   lien: $Enums.LienResponsable
-  joueurId: number
+  joueurId: string
 }
 
 export type ResponsableUpdateManyMutationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lien?: Prisma.EnumLienResponsableFieldUpdateOperationsInput | $Enums.LienResponsable
 }
 
 export type ResponsableUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lien?: Prisma.EnumLienResponsableFieldUpdateOperationsInput | $Enums.LienResponsable
-  joueurId?: Prisma.IntFieldUpdateOperationsInput | number
+  joueurId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ResponsableListRelationFilter = {
@@ -334,12 +335,9 @@ export type ResponsableCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nom?: Prisma.SortOrder
   prenom?: Prisma.SortOrder
+  telephone?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   lien?: Prisma.SortOrder
-  joueurId?: Prisma.SortOrder
-}
-
-export type ResponsableAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   joueurId?: Prisma.SortOrder
 }
 
@@ -347,6 +345,8 @@ export type ResponsableMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nom?: Prisma.SortOrder
   prenom?: Prisma.SortOrder
+  telephone?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   lien?: Prisma.SortOrder
   joueurId?: Prisma.SortOrder
 }
@@ -355,12 +355,9 @@ export type ResponsableMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nom?: Prisma.SortOrder
   prenom?: Prisma.SortOrder
+  telephone?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   lien?: Prisma.SortOrder
-  joueurId?: Prisma.SortOrder
-}
-
-export type ResponsableSumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   joueurId?: Prisma.SortOrder
 }
 
@@ -411,15 +408,20 @@ export type EnumLienResponsableFieldUpdateOperationsInput = {
 }
 
 export type ResponsableCreateWithoutJoueurInput = {
+  id?: string
   nom: string
   prenom: string
+  telephone: string
+  email?: string | null
   lien: $Enums.LienResponsable
 }
 
 export type ResponsableUncheckedCreateWithoutJoueurInput = {
-  id?: number
+  id?: string
   nom: string
   prenom: string
+  telephone: string
+  email?: string | null
   lien: $Enums.LienResponsable
 }
 
@@ -453,37 +455,48 @@ export type ResponsableScalarWhereInput = {
   AND?: Prisma.ResponsableScalarWhereInput | Prisma.ResponsableScalarWhereInput[]
   OR?: Prisma.ResponsableScalarWhereInput[]
   NOT?: Prisma.ResponsableScalarWhereInput | Prisma.ResponsableScalarWhereInput[]
-  id?: Prisma.IntFilter<"Responsable"> | number
+  id?: Prisma.UuidFilter<"Responsable"> | string
   nom?: Prisma.StringFilter<"Responsable"> | string
   prenom?: Prisma.StringFilter<"Responsable"> | string
+  telephone?: Prisma.StringFilter<"Responsable"> | string
+  email?: Prisma.StringNullableFilter<"Responsable"> | string | null
   lien?: Prisma.EnumLienResponsableFilter<"Responsable"> | $Enums.LienResponsable
-  joueurId?: Prisma.IntFilter<"Responsable"> | number
+  joueurId?: Prisma.UuidFilter<"Responsable"> | string
 }
 
 export type ResponsableCreateManyJoueurInput = {
-  id?: number
+  id?: string
   nom: string
   prenom: string
+  telephone: string
+  email?: string | null
   lien: $Enums.LienResponsable
 }
 
 export type ResponsableUpdateWithoutJoueurInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lien?: Prisma.EnumLienResponsableFieldUpdateOperationsInput | $Enums.LienResponsable
 }
 
 export type ResponsableUncheckedUpdateWithoutJoueurInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lien?: Prisma.EnumLienResponsableFieldUpdateOperationsInput | $Enums.LienResponsable
 }
 
 export type ResponsableUncheckedUpdateManyWithoutJoueurInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   nom?: Prisma.StringFieldUpdateOperationsInput | string
   prenom?: Prisma.StringFieldUpdateOperationsInput | string
+  telephone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lien?: Prisma.EnumLienResponsableFieldUpdateOperationsInput | $Enums.LienResponsable
 }
 
@@ -493,6 +506,8 @@ export type ResponsableSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   nom?: boolean
   prenom?: boolean
+  telephone?: boolean
+  email?: boolean
   lien?: boolean
   joueurId?: boolean
   joueur?: boolean | Prisma.JoueurDefaultArgs<ExtArgs>
@@ -502,6 +517,8 @@ export type ResponsableSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   nom?: boolean
   prenom?: boolean
+  telephone?: boolean
+  email?: boolean
   lien?: boolean
   joueurId?: boolean
   joueur?: boolean | Prisma.JoueurDefaultArgs<ExtArgs>
@@ -511,6 +528,8 @@ export type ResponsableSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   nom?: boolean
   prenom?: boolean
+  telephone?: boolean
+  email?: boolean
   lien?: boolean
   joueurId?: boolean
   joueur?: boolean | Prisma.JoueurDefaultArgs<ExtArgs>
@@ -520,11 +539,13 @@ export type ResponsableSelectScalar = {
   id?: boolean
   nom?: boolean
   prenom?: boolean
+  telephone?: boolean
+  email?: boolean
   lien?: boolean
   joueurId?: boolean
 }
 
-export type ResponsableOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nom" | "prenom" | "lien" | "joueurId", ExtArgs["result"]["responsable"]>
+export type ResponsableOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nom" | "prenom" | "telephone" | "email" | "lien" | "joueurId", ExtArgs["result"]["responsable"]>
 export type ResponsableInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   joueur?: boolean | Prisma.JoueurDefaultArgs<ExtArgs>
 }
@@ -541,11 +562,13 @@ export type $ResponsablePayload<ExtArgs extends runtime.Types.Extensions.Interna
     joueur: Prisma.$JoueurPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
+    id: string
     nom: string
     prenom: string
+    telephone: string
+    email: string | null
     lien: $Enums.LienResponsable
-    joueurId: number
+    joueurId: string
   }, ExtArgs["result"]["responsable"]>
   composites: {}
 }
@@ -970,11 +993,13 @@ export interface Prisma__ResponsableClient<T, Null = never, ExtArgs extends runt
  * Fields of the Responsable model
  */
 export interface ResponsableFieldRefs {
-  readonly id: Prisma.FieldRef<"Responsable", 'Int'>
+  readonly id: Prisma.FieldRef<"Responsable", 'String'>
   readonly nom: Prisma.FieldRef<"Responsable", 'String'>
   readonly prenom: Prisma.FieldRef<"Responsable", 'String'>
+  readonly telephone: Prisma.FieldRef<"Responsable", 'String'>
+  readonly email: Prisma.FieldRef<"Responsable", 'String'>
   readonly lien: Prisma.FieldRef<"Responsable", 'LienResponsable'>
-  readonly joueurId: Prisma.FieldRef<"Responsable", 'Int'>
+  readonly joueurId: Prisma.FieldRef<"Responsable", 'String'>
 }
     
 
