@@ -3,31 +3,31 @@ import prisma from '@/lib/prisma';
 import { handleApiError } from '@/lib/http';
 
 /**
- * GET /api/inscriptions/check?joueurId=xxx&saisonId=xxx
- * Vérifier si une licence existe déjà pour un JOUEUR et une saison
- * SÉCURITÉ: Ne vérifie QUE les licences de JOUEURS (lieuNaissance non vide)
+ * GET /api/arbitres/inscriptions/check?arbitreId=xxx&saisonId=xxx
+ * Vérifier si une licence existe déjà pour un ARBITRE et une saison
+ * SÉCURITÉ: Ne vérifie QUE les licences d'ARBITRES (lieuNaissance vide)
  */
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const joueurId = searchParams.get('joueurId');
+    const arbitreId = searchParams.get('arbitreId');
     const saisonId = searchParams.get('saisonId');
 
-    if (!joueurId || !saisonId) {
+    if (!arbitreId || !saisonId) {
       return NextResponse.json(
-        { message: 'Paramètres joueurId et saisonId requis' },
+        { message: 'Paramètres arbitreId et saisonId requis' },
         { status: 400 }
       );
     }
 
-    // Vérifier d'abord que c'est bien un joueur (lieuNaissance non vide)
-    const joueur = await prisma.joueur.findUnique({
-      where: { id: joueurId },
+    // Vérifier d'abord que c'est bien un arbitre (lieuNaissance vide)
+    const arbitre = await prisma.joueur.findUnique({
+      where: { id: arbitreId },
       select: { lieuNaissance: true },
     });
 
-    // Si c'est un arbitre (lieuNaissance vide), retourner comme si aucune licence n'existait
-    if (!joueur || !joueur.lieuNaissance || joueur.lieuNaissance.trim() === '') {
+    // Si c'est un joueur (lieuNaissance rempli), retourner comme si aucune licence n'existait
+    if (!arbitre || (arbitre.lieuNaissance && arbitre.lieuNaissance.trim() !== '')) {
       return NextResponse.json({
         exists: false,
         licence: null,
@@ -37,7 +37,7 @@ export async function GET(req: Request) {
     const licenceExistante = await prisma.licence.findFirst({
       where: {
         saisonId,
-        joueurId,
+        joueurId: arbitreId, // Les arbitres utilisent la même table Joueur
       },
       select: {
         id: true,
@@ -54,4 +54,3 @@ export async function GET(req: Request) {
     return handleApiError(error);
   }
 }
-

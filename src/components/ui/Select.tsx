@@ -5,14 +5,15 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   error?: string;
   helperText?: string;
   options: { value: string; label: string }[];
+  showPlaceholder?: boolean;
 }
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className = '', label, error, helperText, required, options, ...props }, ref) => {
+  ({ className = '', label, error, helperText, required, options, showPlaceholder = true, ...props }, ref) => {
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-xs md:text-sm font-medium text-gray-700 mb-0.5 md:mb-1">
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
           </label>
@@ -20,8 +21,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           className={`
-            w-full px-3 py-2 border rounded-lg shadow-sm
-            text-gray-900 bg-white
+            w-full px-2 py-1.5 md:px-3 md:py-2 border rounded-lg shadow-sm
+            text-sm md:text-base text-gray-900 bg-white
             focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
             disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed
             ${error ? 'border-red-500' : 'border-gray-300'}
@@ -29,7 +30,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           `}
           {...props}
         >
-          <option value="">Sélectionner...</option>
+          {showPlaceholder && <option value="">Sélectionner...</option>}
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}

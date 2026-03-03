@@ -13,6 +13,65 @@ interface ImageCaptureProps {
   description?: string;
 }
 
+/**
+ * Compresse une image pour réduire sa taille
+ * @param file - Le fichier image à compresser
+ * @param maxWidth - Largeur maximale (défaut: 1920)
+ * @param maxHeight - Hauteur maximale (défaut: 1920)
+ * @param quality - Qualité JPEG (0-1, défaut: 0.85)
+ * @returns Promise<string> - Base64 de l'image compressée
+ */
+function compressImage(
+  file: File,
+  maxWidth: number = 1920,
+  maxHeight: number = 1920,
+  quality: number = 0.85
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        // Calculer les nouvelles dimensions en conservant le ratio
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          } else {
+            width = (width * maxHeight) / height;
+            height = maxHeight;
+          }
+        }
+
+        // Créer un canvas pour redimensionner et compresser
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+
+        if (!ctx) {
+          reject(new Error('Impossible de créer le contexte canvas'));
+          return;
+        }
+
+        // Dessiner l'image redimensionnée
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convertir en base64 avec compression
+        const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedBase64);
+      };
+      img.onerror = () => reject(new Error("Erreur lors du chargement de l'image"));
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => reject(new Error("Erreur lors de la lecture du fichier"));
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function ImageCapture({
   label,
   value,
@@ -23,6 +82,7 @@ export default function ImageCapture({
   description,
 }: ImageCaptureProps) {
   const [error, setError] = useState('');
+  const [isCompressing, setIsCompressing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSelect = async (file: File) => {
@@ -36,13 +96,37 @@ export default function ImageCapture({
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      onChange(reader.result as string);
+    setIsCompressing(true);
+    setError('');
+
+    try {
+      // Compresser l'image avant de la stocker
+      const compressedBase64 = await compressImage(file);
+      
+      // Vérifier la taille après compression
+      const sizeInMB = (compressedBase64.length * 3) / 4 / 1024 / 1024;
+      if (sizeInMB > maxSizeMB) {
+        // Réessayer avec une qualité plus faible
+        const lowerQualityBase64 = await compressImage(file, 1920, 1920, 0.7);
+        const lowerSizeInMB = (lowerQualityBase64.length * 3) / 4 / 1024 / 1024;
+        
+        if (lowerSizeInMB > maxSizeMB) {
+          setError(`L'image est trop grande même après compression. Taille: ${sizeInMB.toFixed(2)}MB`);
+          setIsCompressing(false);
+          return;
+        }
+        
+        onChange(lowerQualityBase64);
+      } else {
+        onChange(compressedBase64);
+      }
+      
       setError('');
-    };
-    reader.onerror = () => setError("Erreur lors de la lecture de l'image");
-    reader.readAsDataURL(file);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la compression de l'image");
+    } finally {
+      setIsCompressing(false);
+    }
   };
 
   return (
@@ -68,7 +152,13 @@ export default function ImageCapture({
         className="hidden"
       />
 
-      {value ? (
+      {isCompressing && (
+        <div className="text-center py-4">
+          <p className="text-sm text-gray-600">Compression de l'image en cours...</p>
+        </div>
+      )}
+
+      {value && !isCompressing ? (
         <div className="space-y-2">
           <img
             src={value}
@@ -81,6 +171,7 @@ export default function ImageCapture({
               variant="secondary"
               onClick={() => inputRef.current?.click()}
               className="w-full"
+              disabled={isCompressing}
             >
               Remplacer
             </Button>
@@ -89,21 +180,23 @@ export default function ImageCapture({
               variant="danger"
               onClick={() => onChange('')}
               className="w-full"
+              disabled={isCompressing}
             >
               Supprimer
             </Button>
           </div>
         </div>
-      ) : (
+      ) : !isCompressing ? (
         <Button
           type="button"
           variant="secondary"
           className="w-full"
           onClick={() => inputRef.current?.click()}
+          disabled={isCompressing}
         >
           Charger une image
         </Button>
-      )}
+      ) : null}
 
       {error && <p className="text-sm text-red-600">{error}</p>}
     </div>

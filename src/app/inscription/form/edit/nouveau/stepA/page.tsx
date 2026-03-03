@@ -173,7 +173,7 @@ export default function StepAPage() {
         className="fixed inset-0 opacity-20 md:opacity-10 pointer-events-none z-0"
         style={{
           backgroundImage: 'url(/images/korfball.png)',
-          backgroundSize: isMobile ? '120%' : '70%',
+          backgroundSize: '85%',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center center',
           top: 0,
@@ -354,12 +354,15 @@ export default function StepAPage() {
                   label="Ancien club"
                   value={formData.clubPrecedentId}
                   onChange={(e) => updateFormData({ clubPrecedentId: e.target.value })}
+                  showPlaceholder={false}
                   options={[
-                    { value: '', label: 'Sélectionnez un club' },
-                    ...clubs.map((club) => ({
-                      value: club.id,
-                      label: `${club.nom}${club.ville ? ` - ${club.ville}` : ''}${club.pays ? ` (${club.pays})` : ''}`,
-                    }))
+                    { value: '', label: 'Aucun' },
+                    ...clubs
+                      .map((club) => ({
+                        value: club.id,
+                        label: `${club.nom}${club.ville ? ` - ${club.ville}` : ''}${club.pays ? ` (${club.pays})` : ''}`,
+                      }))
+                      .sort((a, b) => a.label.localeCompare(b.label))
                   ]}
                   helperText="Sélectionnez votre ancien club (optionnel)"
                 />
@@ -370,12 +373,15 @@ export default function StepAPage() {
                 required
                 value={formData.clubActuelId}
                 onChange={(e) => updateFormData({ clubActuelId: e.target.value })}
+                showPlaceholder={false}
                 options={[
-                  { value: '', label: 'Sélectionnez un club' },
-                  ...clubs.map((club) => ({
-                    value: club.id,
-                    label: `${club.nom}${club.ville ? ` - ${club.ville}` : ''}${club.pays ? ` (${club.pays})` : ''}`,
-                  }))
+                  { value: '', label: 'Aucun' },
+                  ...clubs
+                    .map((club) => ({
+                      value: club.id,
+                      label: `${club.nom}${club.ville ? ` - ${club.ville}` : ''}${club.pays ? ` (${club.pays})` : ''}`,
+                    }))
+                    .sort((a, b) => a.label.localeCompare(b.label))
                 ]}
                 helperText="Sélectionnez votre club actuel"
               />

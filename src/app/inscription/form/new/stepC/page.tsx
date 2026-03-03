@@ -210,7 +210,7 @@ export default function StepCPage() {
         className="fixed inset-0 opacity-20 md:opacity-10 pointer-events-none z-0"
         style={{
           backgroundImage: 'url(/images/korfball.png)',
-          backgroundSize: isMobile ? '120%' : '70%',
+          backgroundSize: '85%',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center center',
           top: 0,

@@ -28,14 +28,13 @@ interface Licence {
   dateValidation: string | null;
   commentaireAdmin: string | null;
   createdAt: string;
-  joueur: {
+  arbitre: {
     id: string;
     nom: string;
     prenom: string;
     email: string | null;
     telephone: string;
     dateNaissance: string;
-    lieuNaissance: string;
     nationalite: string;
     sexe: string;
     numeroLicence: string | null;
@@ -43,13 +42,6 @@ interface Licence {
     signature: string | null;
     pieceIdentite: string | null;
     certificatMedical: string | null;
-    responsables: Array<{
-      nom: string;
-      prenom: string;
-      telephone: string;
-      email: string | null;
-      lien: string;
-    }>;
   };
   saison: {
     id: string;
@@ -67,7 +59,7 @@ interface Licence {
   paiement: Paiement | null;
 }
 
-function SuiviContent() {
+function SuiviArbitreContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [numeroLicence, setNumeroLicence] = useState('');
@@ -80,6 +72,15 @@ function SuiviContent() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const isRedirectedFromRenewal = searchParams.get('redirected') === 'renewal';
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleSearch = async () => {
     // Normaliser le numéro de licence (enlever les espaces en trop)
@@ -116,7 +117,7 @@ function SuiviContent() {
       const telephoneNormalise = telephone.replace(/\s/g, '');
 
       const response = await fetch(
-        `/api/inscriptions?numeroLicence=${encodeURIComponent(numeroLicenceNormalise)}&dateNaissance=${encodeURIComponent(dateNaissance)}&telephone=${encodeURIComponent(telephoneNormalise)}`
+        `/api/arbitres/inscriptions?numeroLicence=${encodeURIComponent(numeroLicenceNormalise)}&dateNaissance=${encodeURIComponent(dateNaissance)}&telephone=${encodeURIComponent(telephoneNormalise)}`
       );
 
       if (!response.ok) {
@@ -125,7 +126,12 @@ function SuiviContent() {
       }
 
       const data = await response.json();
-      setLicence(data);
+      // Mapper joueur -> arbitre
+      const licenceArbitre = {
+        ...data,
+        arbitre: data.joueur || data.arbitre,
+      };
+      setLicence(licenceArbitre);
     } catch (err: unknown) {
       const error = err as Error;
       setError(error.message || 'Une erreur est survenue');
@@ -152,66 +158,10 @@ function SuiviContent() {
     );
   };
 
-  const handleEditRejectedLicence = (licence: Licence) => {
-    // Normaliser le téléphone : enlever +225 et les espaces pour avoir uniquement les 10 chiffres
-    const normaliserTelephone = (tel: string) => {
-      return tel.replace(/^\+225/, '').replace(/\s/g, '');
-    };
-
-    // Construire les données du formulaire à partir de la licence
-    const formDataToEdit = {
-      type: licence.type,
-      saisonId: licence.saison.id || '',
-      joueur: {
-        nom: licence.joueur.nom,
-        prenom: licence.joueur.prenom,
-        email: licence.joueur.email || '',
-        telephone: normaliserTelephone(licence.joueur.telephone),
-        dateNaissance: new Date(licence.joueur.dateNaissance).toISOString().split('T')[0],
-        lieuNaissance: licence.joueur.lieuNaissance || '',
-        nationalite: licence.joueur.nationalite || 'Ivoirienne',
-        sexe: licence.joueur.sexe || '',
-        photo: licence.joueur.photo || '',
-        signature: licence.joueur.signature || '',
-        pieceIdentite: licence.joueur.pieceIdentite || '',
-        certificatMedical: licence.joueur.certificatMedical || '',
-      },
-      responsables: licence.joueur.responsables?.map(resp => ({
-        nom: resp.nom,
-        prenom: resp.prenom,
-        telephone: normaliserTelephone(resp.telephone || ''),
-        email: resp.email || '',
-        lien: resp.lien,
-      })) || [],
-      numeroLicencePrecedent: licence.type === 'RENOUVELLEMENT' ? (licence.joueur.numeroLicence || '') : '',
-      clubPrecedentId: licence.clubPrecedent?.id || '',
-      clubActuelId: licence.clubActuel?.id || '',
-    };
-
-    // Log pour diagnostic des photos
-    console.log('📸 Photos chargées pour édition:', {
-      photo: licence.joueur.photo ? '✅ Présente' : '❌ Manquante',
-      signature: licence.joueur.signature ? '✅ Présente' : '❌ Manquante',
-      pieceIdentite: licence.joueur.pieceIdentite ? '✅ Présente' : '❌ Manquante',
-      certificatMedical: licence.joueur.certificatMedical ? '✅ Présente' : '❌ Manquante',
-    });
-
-    // Stocker dans localStorage pour pré-remplir le formulaire
-    localStorage.setItem('inscription_form_data', JSON.stringify(formDataToEdit));
-
-    // Stocker aussi l'ID de la licence à modifier, le commentaire admin et le numéro de licence
-    localStorage.setItem('editing_licence_id', licence.id);
-    localStorage.setItem('admin_rejection_comment', licence.commentaireAdmin || '');
-    localStorage.setItem('editing_numero_licence', licence.joueur.numeroLicence || '');
-
-    // Rediriger vers le formulaire d'édition
-    router.push(`/inscription/form/edit/${licence.type.toLowerCase()}/stepA`);
-  };
-
   return (
     <div className="min-h-screen bg-white relative py-12 px-4 sm:px-6 lg:px-8">
       {/* Logo en arrière-plan */}
-      <div 
+      <div
         className="fixed inset-0 opacity-20 md:opacity-10 pointer-events-none z-0"
         style={{
           backgroundImage: 'url(/images/korfball.png)',
@@ -238,9 +188,9 @@ function SuiviContent() {
         {isRedirectedFromRenewal && (
           <div className="mb-6">
             <Alert type="info">
-              <strong>Duivi de votre licence</strong>
+              <strong>Suivi de votre licence</strong>
               <br />
-              Vous avez été redirigé ici car vous avez déjà une licence pour la saison en cours. 
+              Vous avez été redirigé ici car vous avez déjà une licence pour la saison en cours.
               Un seul renouvellement est autorisé par saison. Vous pouvez consulter l'état de votre licence ci-dessous.
             </Alert>
           </div>
@@ -249,7 +199,7 @@ function SuiviContent() {
         {/* En-tête */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Suivi de licence
+            Suivi de licence arbitre
           </h1>
           <p className="text-gray-600">
             Entrez vos informations pour consulter l'état de votre licence
@@ -317,24 +267,24 @@ function SuiviContent() {
                 {getStatutBadge(licence.statut)}
               </div>
 
-              {/* Informations du joueur */}
+              {/* Informations de l'arbitre */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Informations du joueur</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Informations de l'arbitre</h3>
                 <dl className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Nom</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{licence.joueur.prenom} {licence.joueur.nom}</dd>
+                    <dd className="mt-1 text-sm text-gray-900">{licence.arbitre.prenom} {licence.arbitre.nom}</dd>
                   </div>
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Date de naissance</dt>
                     <dd className="mt-1 text-sm text-gray-900">
-                      {formatDate(licence.joueur.dateNaissance)}
+                      {formatDate(licence.arbitre.dateNaissance)}
                     </dd>
                   </div>
-                  {licence.joueur.email && (
+                  {licence.arbitre.email && (
                     <div>
                       <dt className="text-sm font-medium text-gray-500">Email</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{licence.joueur.email}</dd>
+                      <dd className="mt-1 text-sm text-gray-900">{licence.arbitre.email}</dd>
                     </div>
                   )}
                   <div>
@@ -346,62 +296,62 @@ function SuiviContent() {
                 </dl>
               </div>
 
-              {/* Documents du joueur - Affichage en grille compacte */}
-              {(licence.joueur.photo || licence.joueur.signature || licence.joueur.pieceIdentite || licence.joueur.certificatMedical) && (
+              {/* Documents de l'arbitre - Affichage en grille compacte */}
+              {(licence.arbitre.photo || licence.arbitre.signature || licence.arbitre.pieceIdentite || licence.arbitre.certificatMedical) && (
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Documents</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {licence.joueur.photo && (
+                    {licence.arbitre.photo && (
                       <div>
                         <p className="text-sm font-medium text-gray-700 mb-2">Photo</p>
                         <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-300 transition-colors">
                           <img
-                            src={licence.joueur.photo}
-                            alt={`Photo de ${licence.joueur.prenom} ${licence.joueur.nom}`}
+                            src={licence.arbitre.photo}
+                            alt={`Photo de ${licence.arbitre.prenom} ${licence.arbitre.nom}`}
                             className="w-full h-32 object-contain"
-                            onClick={() => window.open(licence.joueur.photo!, '_blank')}
+                            onClick={() => window.open(licence.arbitre.photo!, '_blank')}
                             title="Cliquer pour agrandir"
                           />
                         </div>
                       </div>
                     )}
-                    {licence.joueur.signature && (
+                    {licence.arbitre.signature && (
                       <div>
                         <p className="text-sm font-medium text-gray-700 mb-2">Signature</p>
                         <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-300 transition-colors">
                           <img
-                            src={licence.joueur.signature}
-                            alt={`Signature de ${licence.joueur.prenom} ${licence.joueur.nom}`}
+                            src={licence.arbitre.signature}
+                            alt={`Signature de ${licence.arbitre.prenom} ${licence.arbitre.nom}`}
                             className="w-full h-32 object-contain"
-                            onClick={() => window.open(licence.joueur.signature!, '_blank')}
+                            onClick={() => window.open(licence.arbitre.signature!, '_blank')}
                             title="Cliquer pour agrandir"
                           />
                         </div>
                       </div>
                     )}
-                    {licence.joueur.pieceIdentite && (
+                    {licence.arbitre.pieceIdentite && (
                       <div>
                         <p className="text-sm font-medium text-gray-700 mb-2">Pièce d'identité</p>
                         <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-300 transition-colors">
                           <img
-                            src={licence.joueur.pieceIdentite}
-                            alt={`Pièce d'identité de ${licence.joueur.prenom} ${licence.joueur.nom}`}
+                            src={licence.arbitre.pieceIdentite}
+                            alt={`Pièce d'identité de ${licence.arbitre.prenom} ${licence.arbitre.nom}`}
                             className="w-full h-32 object-contain"
-                            onClick={() => window.open(licence.joueur.pieceIdentite!, '_blank')}
+                            onClick={() => window.open(licence.arbitre.pieceIdentite!, '_blank')}
                             title="Cliquer pour agrandir"
                           />
                         </div>
                       </div>
                     )}
-                    {licence.joueur.certificatMedical && (
+                    {licence.arbitre.certificatMedical && (
                       <div>
                         <p className="text-sm font-medium text-gray-700 mb-2">Certificat médical</p>
                         <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-300 transition-colors">
                           <img
-                            src={licence.joueur.certificatMedical}
-                            alt={`Certificat médical de ${licence.joueur.prenom} ${licence.joueur.nom}`}
+                            src={licence.arbitre.certificatMedical}
+                            alt={`Certificat médical de ${licence.arbitre.prenom} ${licence.arbitre.nom}`}
                             className="w-full h-32 object-contain"
-                            onClick={() => window.open(licence.joueur.certificatMedical!, '_blank')}
+                            onClick={() => window.open(licence.arbitre.certificatMedical!, '_blank')}
                             title="Cliquer pour agrandir"
                           />
                         </div>
@@ -435,15 +385,6 @@ function SuiviContent() {
                         >
                           📋 Copier
                         </button>
-                      </dd>
-                    </div>
-                  )}
-                  {licence.clubActuel && (
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Club</dt>
-                      <dd className="mt-1 text-sm text-gray-900">
-                        {licence.clubActuel.nom}
-                        {licence.clubActuel.ville && ` - ${licence.clubActuel.ville}`}
                       </dd>
                     </div>
                   )}
@@ -500,19 +441,9 @@ function SuiviContent() {
                         <p className="mt-1">{licence.commentaireAdmin}</p>
                       </div>
                     ) : (
-                      <p>Votre demande de licence a été rejetée. Veuillez contacter votre club pour plus d'informations.</p>
+                      <p>Votre demande de licence a été rejetée. Veuillez contacter l'administration pour plus d'informations.</p>
                     )}
                   </Alert>
-
-                  {/* Bouton de modification */}
-                  <div className="mt-4">
-                    <Button
-                      onClick={() => handleEditRejectedLicence(licence)}
-                      className="w-full"
-                    >
-                      Modifier ma demande et resoumettre
-                    </Button>
-                  </div>
                 </div>
               )}
 
@@ -559,23 +490,19 @@ function SuiviContent() {
                       setIsDownloading(true);
                       try {
                         // L'API redirige vers Firebase Storage
-                        // On fait un fetch pour déclencher le téléchargement
-                        // Construire l'URL avec les identifiants pour le téléchargement
-                        const downloadUrl = `/api/licences/download?numeroLicence=${encodeURIComponent(licence.numeroLicence!)}&dateNaissance=${encodeURIComponent(new Date(licence.joueur.dateNaissance).toISOString().split('T')[0])}&telephone=${encodeURIComponent(licence.joueur.telephone.replace(/\s/g, '').replace(/^\+225/, ''))}`;
-                        
-                        // Utiliser fetch avec redirect: 'follow' pour suivre la redirection
+                        const downloadUrl = `/api/licences/download?numeroLicence=${encodeURIComponent(licence.numeroLicence!)}&dateNaissance=${encodeURIComponent(new Date(licence.arbitre.dateNaissance).toISOString().split('T')[0])}&telephone=${encodeURIComponent(licence.arbitre.telephone.replace(/\s/g, '').replace(/^\+225/, ''))}`;
+
                         const response = await fetch(downloadUrl, {
                           method: 'GET',
                           redirect: 'follow',
                         });
-                        
+
                         if (response.ok) {
-                          // Télécharger le blob
                           const blob = await response.blob();
                           const url = window.URL.createObjectURL(blob);
                           const a = document.createElement('a');
                           a.href = url;
-                          a.download = `licence-${licence.numeroLicence || licence.id}.pdf`;
+                          a.download = `licence-arbitre-${licence.numeroLicence || licence.id}.pdf`;
                           document.body.appendChild(a);
                           a.click();
                           window.URL.revokeObjectURL(url);
@@ -617,10 +544,10 @@ function SuiviContent() {
   );
 }
 
-export default function SuiviPage() {
+export default function SuiviArbitrePage() {
   return (
     <Suspense fallback={<div>Chargement...</div>}>
-      <SuiviContent />
+      <SuiviArbitreContent />
     </Suspense>
   );
 }

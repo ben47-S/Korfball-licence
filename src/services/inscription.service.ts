@@ -238,20 +238,18 @@ export class InscriptionService {
         },
       });
 
-      // 5.3. Créer les responsables APRÈS la licence (séquentiellement pour réduire le travail dans la transaction)
+      // 5.3. Créer les responsables APRÈS la licence (en batch pour optimiser les performances)
       if (data.responsables && data.responsables.length > 0) {
-        for (const resp of data.responsables) {
-          await tx.responsable.create({
-            data: {
+        await tx.responsable.createMany({
+          data: data.responsables.map((resp) => ({
               nom: resp.nom,
               prenom: resp.prenom,
               telephone: resp.telephone,
               email: resp.email || null,
               lien: resp.lien,
               joueurId: joueur.id,
-            },
+          })),
           });
-        }
       }
 
       // 4.4. Récupérer le numéro de licence du joueur (pour l'email)
@@ -291,14 +289,18 @@ export class InscriptionService {
         numeroLicence: joueurComplet?.numeroLicence || null,
         emailSent,
       };
+    }, {
+      timeout: 30000, // Timeout de 30s pour la transaction (augmenté pour gérer les images compressées)
     });
   }
 
 
 
   /**
-   * Récupérer une licence par numéro de licence, date de naissance et téléphone
+   * Récupérer une licence JOUEUR par numéro de licence, date de naissance et téléphone
    * Vérifie que les informations correspondent pour sécuriser l'accès
+   * SÉCURITÉ: Ne retourne QUE les licences de JOUEURS (lieuNaissance non vide)
+   * Si une licence d'arbitre est recherchée ici, elle ne sera pas trouvée
    *
    * @param numeroLicence - Numéro de licence au format FIK-YYYY-XXXXXX
    * @param dateNaissance - Date de naissance au format YYYY-MM-DD
@@ -367,6 +369,12 @@ export class InscriptionService {
     });
 
     if (!joueur) {
+      throw new Error('Aucune licence trouvée avec ce numéro de licence');
+    }
+
+    // SÉCURITÉ: Vérifier que c'est bien un JOUEUR (lieuNaissance rempli)
+    // Si c'est un arbitre (lieuNaissance vide), on fait comme si la licence n'existe pas
+    if (!joueur.lieuNaissance || joueur.lieuNaissance.trim() === '') {
       throw new Error('Aucune licence trouvée avec ce numéro de licence');
     }
 

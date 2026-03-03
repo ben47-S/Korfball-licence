@@ -107,7 +107,7 @@ export default function HomePage() {
         className="fixed inset-0 opacity-20 md:opacity-10 pointer-events-none z-0"
         style={{
           backgroundImage: 'url(/images/logoKorfball.jpg)',
-          backgroundSize: isMobile ? '120%' : '70%',
+          backgroundSize: '85%',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center center',
           top: 0,

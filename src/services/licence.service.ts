@@ -42,6 +42,8 @@ export class LicenceService {
       });
 
       return licence;
+    }, {
+      timeout: 30000, // Timeout de 30s pour la transaction
     });
   }
 
@@ -115,6 +117,8 @@ export class LicenceService {
           },
         },
       });
+    }, {
+      timeout: 30000, // Timeout de 30s pour la transaction
     });
   }
 

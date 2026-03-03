@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Input from '@/components/ui/Input';
-import Select from '@/components/ui/Select';
 import Button from '@/components/ui/Button';
 import Alert from '@/components/ui/Alert';
 import Card from '@/components/ui/Card';
@@ -11,23 +10,23 @@ import { formatDate } from '@/lib/date-utils';
 import { formatTelephone } from '@/lib/utils';
 import { useFormData } from '../../hooks/useFormData';
 import StepIndicator from '../../components/StepIndicator';
-import type { Saison, Club } from '../../types';
+import type { Saison } from '../../types';
 
 interface LicencePrecedente {
   id: string;
   type: string;
   statut: string;
   numeroLicence: string | null;
-  joueur: {
+  arbitre: {
     id: string;
     nom: string;
     prenom: string;
     email: string | null;
     telephone: string;
     dateNaissance: string;
-    lieuNaissance: string;
-    nationalite: string;
     sexe: string | null;
+    nationalite: string;
+    numeroPieceIdentite: string;
     photo: string | null;
     signature: string | null;
   };
@@ -35,24 +34,6 @@ interface LicencePrecedente {
     id: string;
     code: string;
   };
-  clubActuel: {
-    id: string;
-    nom: string;
-    ville: string | null;
-  } | null;
-  clubPrecedent: {
-    id: string;
-    nom: string;
-    ville: string | null;
-  } | null;
-  responsables: Array<{
-    id: string;
-    nom: string;
-    prenom: string;
-    telephone: string | null;
-    email: string | null;
-    lien: string;
-  }>;
 }
 
 export default function RenewStepAPage() {
@@ -60,9 +41,7 @@ export default function RenewStepAPage() {
   const { formData, updateFormData } = useFormData();
   const [error, setError] = useState('');
   const [saisonEnCours, setSaisonEnCours] = useState<Saison | null>(null);
-  const [clubs, setClubs] = useState<Club[]>([]);
   const [loadingData, setLoadingData] = useState(true);
-  const [aUnClubPrecedent, setAUnClubPrecedent] = useState<boolean | null>(null);
   const [numeroLicenceInput, setNumeroLicenceInput] = useState('');
   const [dateNaissanceInput, setDateNaissanceInput] = useState('');
   const [telephoneInput, setTelephoneInput] = useState('');
@@ -85,8 +64,6 @@ export default function RenewStepAPage() {
           if (saisonData.data && saisonData.data.length > 0) {
             const saison = saisonData.data[0];
             setSaisonEnCours(saison);
-            // Ne mettre à jour que si le saisonId est différent pour éviter les boucles
-            // Définir aussi le type à RENOUVELLEMENT pour cette route
             if (formData.saisonId !== saison.id || formData.type !== 'RENOUVELLEMENT') {
               updateFormData({
                 saisonId: saison.id,
@@ -96,12 +73,6 @@ export default function RenewStepAPage() {
           } else {
             setSaisonEnCours(null);
           }
-        }
-
-        const clubsResponse = await fetch('/api/clubs');
-        if (clubsResponse.ok && isMounted) {
-          const clubsData = await clubsResponse.json();
-          setClubs(clubsData.data || []);
         }
       } catch (err) {
         console.error('Erreur lors du chargement des données:', err);
@@ -163,9 +134,8 @@ export default function RenewStepAPage() {
       // Normaliser le téléphone (enlever les espaces)
       const telephoneNormalise = telephoneInput.replace(/\s/g, '');
 
-      // Ajouter forRenewal=true pour chercher dans toutes les saisons (pas seulement la saison en cours)
       const response = await fetch(
-        `/api/inscriptions?numeroLicence=${encodeURIComponent(numeroLicenceInput.toUpperCase())}&dateNaissance=${encodeURIComponent(dateNaissanceInput)}&telephone=${encodeURIComponent(telephoneNormalise)}&forRenewal=true`
+        `/api/arbitres/inscriptions?numeroLicence=${encodeURIComponent(numeroLicenceInput.toUpperCase())}&dateNaissance=${encodeURIComponent(dateNaissanceInput)}&telephone=${encodeURIComponent(telephoneNormalise)}&forRenewal=true`
       );
 
       if (!response.ok) {
@@ -181,66 +151,58 @@ export default function RenewStepAPage() {
       }
 
       // Vérifier que ce n'est pas la même saison
-      // Si c'est la même saison, vérifier d'abord s'il existe déjà une licence pour cette saison
       if (licence.saison.id === formData.saisonId) {
         // Vérifier s'il existe déjà une licence pour cette saison
-        const checkRenewalResponse = await fetch(`/api/inscriptions/check?joueurId=${licence.joueur.id}&saisonId=${formData.saisonId}`);
+        const checkRenewalResponse = await fetch(`/api/arbitres/inscriptions/check?arbitreId=${licence.arbitre.id}&saisonId=${formData.saisonId}`);
         if (checkRenewalResponse.ok) {
           const checkData = await checkRenewalResponse.json();
           if (checkData.exists && checkData.licence) {
-            // Rediriger vers la page de suivi - l'utilisateur devra entrer ses informations
-            router.replace(`/inscription/suivi?redirected=renewal`);
+            router.replace(`/arbitre/suivi?redirected=renewal`);
             return;
           }
         }
-        // Si c'est la même saison et qu'aucune licence n'existe, c'est une erreur
         throw new Error('Vous ne pouvez pas renouveler une licence pour la même saison.');
       }
 
       // Vérifier qu'il n'existe pas déjà une licence pour cette saison
-      // Cela permet de rediriger vers la page de suivi si une licence existe déjà
-      const checkRenewalResponse = await fetch(`/api/inscriptions/check?joueurId=${licence.joueur.id}&saisonId=${formData.saisonId}`);
+      const checkRenewalResponse = await fetch(`/api/arbitres/inscriptions/check?arbitreId=${licence.arbitre.id}&saisonId=${formData.saisonId}`);
       if (checkRenewalResponse.ok) {
         const checkData = await checkRenewalResponse.json();
         if (checkData.exists && checkData.licence) {
-          // Rediriger vers la page de suivi
-          router.replace(`/inscription/suivi?redirected=renewal`);
+          router.replace(`/arbitre/suivi?redirected=renewal`);
           return;
         }
       }
 
       // Pré-remplir le formulaire avec les données de la licence précédente
-      // IMPORTANT: Préserver type et saisonId existants pour éviter les redirections
       updateFormData({
-        type: formData.type, // Préserver le type RENOUVELLEMENT
-        saisonId: formData.saisonId, // Préserver la saison en cours
+        type: formData.type,
+        saisonId: formData.saisonId,
         numeroLicencePrecedent: licence.numeroLicence || '',
-        joueur: {
-          nom: licence.joueur.nom,
-          prenom: licence.joueur.prenom,
-          email: licence.joueur.email || '',
-          telephone: licence.joueur.telephone || '',
-          dateNaissance: new Date(licence.joueur.dateNaissance).toISOString().split('T')[0],
-          lieuNaissance: licence.joueur.lieuNaissance || '',
-          nationalite: licence.joueur.nationalite || 'Ivoirienne',
-          sexe: licence.joueur.sexe || '',
-          photo: licence.joueur.photo || '',
-          signature: licence.joueur.signature || '',
+        arbitre: {
+          nom: licence.arbitre.nom,
+          prenom: licence.arbitre.prenom,
+          email: licence.arbitre.email || '',
+          telephone: licence.arbitre.telephone || '',
+          dateNaissance: new Date(licence.arbitre.dateNaissance).toISOString().split('T')[0],
+          sexe: licence.arbitre.sexe || '',
+          nationalite: licence.arbitre.nationalite || 'Ivoirienne',
+          numeroPieceIdentite: licence.arbitre.numeroPieceIdentite || '',
+          adresse: '',
+          niveauArbitre: '',
+          dateCertification: '',
+          numeroCertificat: '',
+          autoriteCertificatrice: '',
+          zoneAffectation: '',
+          certificatMedicalValide: '',
+          dateExpirationCertificatMedical: '',
+          assuranceActive: '',
+          photo: licence.arbitre.photo || '',
+          signature: licence.arbitre.signature || '',
+          pieceIdentite: '',
+          certificatMedical: '',
         },
-        responsables: (licence.joueur.responsables || []).map((resp) => ({
-          nom: resp.nom,
-          prenom: resp.prenom,
-          telephone: resp.telephone || '',
-          email: resp.email || '',
-          lien: resp.lien,
-        })),
-        clubPrecedentId: licence.clubPrecedent?.id || '',
-        clubActuelId: licence.clubActuel?.id || '',
       });
-
-      if (licence.clubPrecedent) {
-        setAUnClubPrecedent(true);
-      }
 
       setLicencePrecedente(licence);
       setFormPreRempli(true);
@@ -268,14 +230,8 @@ export default function RenewStepAPage() {
       return;
     }
 
-    // Vérifier que le club actuel est sélectionné
-    if (!formData.clubActuelId || formData.clubActuelId === '') {
-      setError('Veuillez sélectionner votre club actuel');
-      return;
-    }
-
     setError('');
-    router.push('/inscription/form/reNew/stepB');
+    router.push('/arbitre/form/reNew/stepB');
   };
 
   return (
@@ -299,14 +255,14 @@ export default function RenewStepAPage() {
         <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Renouvellement de Licence Korfball
+            Renouvellement de Licence Arbitre Korfball
             {saisonEnCours && (
-              <span className="block text-2xl text-indigo-600 mt-2">
+              <span className="block text-2xl text-purple-600 mt-2">
                 Saison {saisonEnCours.code}
               </span>
             )}
           </h1>
-          <p className="text-blue-900 text-4xl font-bold">
+          <p className="text-purple-900 text-4xl font-bold">
             Renouvellement de licence
           </p>
         </div>
@@ -316,12 +272,12 @@ export default function RenewStepAPage() {
             <Alert type="warning">
               <strong>Aucune saison en cours disponible</strong>
               <br />
-              Les inscriptions ne sont pas ouvertes pour le moment. Veuillez contacter votre club ou un administrateur.
+              Les inscriptions ne sont pas ouvertes pour le moment. Veuillez contacter un administrateur.
             </Alert>
           </div>
         )}
 
-        <StepIndicator currentStep="stepA" />
+        <StepIndicator currentStep="stepA" type="reNew" />
 
         {error && (
           <div className="mb-6">
@@ -337,21 +293,21 @@ export default function RenewStepAPage() {
               </h2>
 
               {/* Type de licence fixé à RENOUVELLEMENT pour cette route */}
-              <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Type de licence
                 </label>
-                <div className="text-lg font-semibold text-indigo-900">
+                <div className="text-lg font-semibold text-purple-900">
                   Renouvellement
                 </div>
               </div>
 
               {saisonEnCours && (
-                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Saison
                   </label>
-                  <div className="text-lg font-semibold text-indigo-900">
+                  <div className="text-lg font-semibold text-purple-900">
                     {saisonEnCours.code}
                   </div>
                   <p className="text-sm text-gray-600 mt-1">
@@ -424,105 +380,6 @@ export default function RenewStepAPage() {
                     helperText="Numéro de licence vérifié et validé"
                   />
 
-                  <div className="space-y-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">
-                      Avez-vous un club précédent ?
-                    </label>
-                    <div className="flex gap-4">
-                      <label className="flex items-center cursor-pointer group">
-                        <input
-                          type="radio"
-                          name="aUnClubPrecedentRenouvellement"
-                          value="oui"
-                          checked={aUnClubPrecedent === true}
-                          onChange={() => {
-                            setAUnClubPrecedent(true);
-                            updateFormData({ clubPrecedentId: licencePrecedente.clubPrecedent?.id || '' });
-                          }}
-                          className="sr-only"
-                        />
-                        <div className={`flex items-center justify-center w-5 h-5 rounded-full border-2 transition-all ${
-                          aUnClubPrecedent === true
-                            ? 'border-indigo-600 bg-indigo-600'
-                            : 'border-gray-300 bg-white group-hover:border-indigo-400'
-                        }`}>
-                          {aUnClubPrecedent === true && (
-                            <div className="w-2 h-2 rounded-full bg-white"></div>
-                          )}
-                        </div>
-                        <span className={`ml-2 text-sm ${
-                          aUnClubPrecedent === true ? 'text-gray-900 font-medium' : 'text-gray-700'
-                        }`}>
-                          Oui
-                        </span>
-                      </label>
-                      <label className="flex items-center cursor-pointer group">
-                        <input
-                          type="radio"
-                          name="aUnClubPrecedentRenouvellement"
-                          value="non"
-                          checked={aUnClubPrecedent === false}
-                          onChange={() => {
-                            setAUnClubPrecedent(false);
-                            updateFormData({ clubPrecedentId: '' });
-                          }}
-                          className="sr-only"
-                        />
-                        <div className={`flex items-center justify-center w-5 h-5 rounded-full border-2 transition-all ${
-                          aUnClubPrecedent === false
-                            ? 'border-indigo-600 bg-indigo-600'
-                            : 'border-gray-300 bg-white group-hover:border-indigo-400'
-                        }`}>
-                          {aUnClubPrecedent === false && (
-                            <div className="w-2 h-2 rounded-full bg-white"></div>
-                          )}
-                        </div>
-                        <span className={`ml-2 text-sm ${
-                          aUnClubPrecedent === false ? 'text-gray-900 font-medium' : 'text-gray-700'
-                        }`}>
-                          Non
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {aUnClubPrecedent === true && (
-                    <Select
-                      label="Club précédent"
-                      value={formData.clubPrecedentId}
-                      onChange={(e) => updateFormData({ clubPrecedentId: e.target.value })}
-                      showPlaceholder={false}
-                      options={[
-                        { value: '', label: 'Aucun' },
-                        ...clubs
-                          .map((club) => ({
-                            value: club.id,
-                            label: `${club.nom}${club.ville ? ` - ${club.ville}` : ''}${club.pays ? ` (${club.pays})` : ''}`,
-                          }))
-                          .sort((a, b) => a.label.localeCompare(b.label))
-                      ]}
-                      helperText="Sélectionnez votre club précédent (optionnel)"
-                    />
-                  )}
-
-                  <Select
-                    label="Club actuel"
-                    required
-                    value={formData.clubActuelId}
-                    onChange={(e) => updateFormData({ clubActuelId: e.target.value })}
-                    showPlaceholder={false}
-                    options={[
-                      { value: '', label: 'Aucun' },
-                      ...clubs
-                        .map((club) => ({
-                          value: club.id,
-                          label: `${club.nom}${club.ville ? ` - ${club.ville}` : ''}${club.pays ? ` (${club.pays})` : ''}`,
-                        }))
-                        .sort((a, b) => a.label.localeCompare(b.label))
-                    ]}
-                    helperText="Sélectionnez votre club actuel"
-                  />
-
                   <div className="flex justify-end pt-4 border-t">
                     <Button onClick={handleNext} type="button">
                       Suivant →
@@ -538,3 +395,4 @@ export default function RenewStepAPage() {
     </div>
   );
 }
+

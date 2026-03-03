@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { FormData } from '../types';
 
-const STORAGE_KEY = 'inscription_form_data';
+const STORAGE_KEY = 'arbitre_form_data';
 
 export function useFormData() {
   // Toujours initialiser avec les valeurs par défaut pour éviter les erreurs d'hydratation
@@ -38,8 +38,8 @@ export function useFormData() {
           // Essayer de sauvegarder sans les images pour libérer de l'espace
           const formDataWithoutImages = {
             ...formData,
-            joueur: {
-              ...formData.joueur,
+            arbitre: {
+              ...formData.arbitre,
               photo: '',
               signature: '',
               pieceIdentite: '',
@@ -67,16 +67,13 @@ export function useFormData() {
       const newData = { ...prev };
       
       // Gérer les mises à jour imbriquées
-      if (updates.joueur) {
-        newData.joueur = { ...prev.joueur, ...updates.joueur };
-      }
-      if (updates.responsables !== undefined) {
-        newData.responsables = updates.responsables;
+      if (updates.arbitre) {
+        newData.arbitre = { ...prev.arbitre, ...updates.arbitre };
       }
       
       // Mettre à jour les autres champs
       Object.keys(updates).forEach((key) => {
-        if (key !== 'joueur' && key !== 'responsables') {
+        if (key !== 'arbitre') {
           (newData as any)[key] = (updates as any)[key];
         }
       });
@@ -103,24 +100,30 @@ function getDefaultFormData(): FormData {
   return {
     type: '',
     saisonId: '',
-    joueur: {
+    arbitre: {
       nom: '',
       prenom: '',
-      email: '',
-      telephone: '',
       dateNaissance: '',
-      lieuNaissance: '',
-      nationalite: 'Ivoirienne',
       sexe: '',
+      nationalite: 'Ivoirienne',
+      numeroPieceIdentite: '',
+      telephone: '',
+      email: '',
+      adresse: '',
+      niveauArbitre: '',
+      dateCertification: '',
+      numeroCertificat: '',
+      autoriteCertificatrice: '',
+      zoneAffectation: '',
+      certificatMedicalValide: '',
+      dateExpirationCertificatMedical: '',
+      assuranceActive: '',
       photo: '',
       signature: '',
       pieceIdentite: '',
       certificatMedical: '',
     },
-    responsables: [],
     numeroLicencePrecedent: '',
-    clubPrecedentId: '',
-    clubActuelId: '',
   };
 }
 

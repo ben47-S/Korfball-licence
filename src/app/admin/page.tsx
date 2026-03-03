@@ -42,6 +42,7 @@ export default function AdminPage() {
   const [licences, setLicences] = useState<Licence[]>([]);
   const [filterStatut, setFilterStatut] = useState<'TOUS' | 'SOUMISE' | 'EN_CORRECTION' | 'VALIDEE' | 'REJETEE'>('TOUS');
   const [filterSaison, setFilterSaison] = useState<'EN_COURS' | 'ARCHIVES' | 'TOUS' | string>('EN_COURS');
+  const [filterType, setFilterType] = useState<'TOUS' | 'ARBITRE' | 'JOUEUR'>('TOUS');
   const [selectedLicence, setSelectedLicence] = useState<Licence | null>(null);
   const [showValidateModal, setShowValidateModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -52,6 +53,9 @@ export default function AdminPage() {
   const [isCreatingClub, setIsCreatingClub] = useState(false);
   const [isMarkingPayment, setIsMarkingPayment] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageTitle, setSelectedImageTitle] = useState<string>('');
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const loadingRef = useRef(false);
 
   const loadData = useCallback(async () => {
@@ -147,6 +151,20 @@ export default function AdminPage() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    // Détecter le scroll pour afficher le bouton "remonter"
+    const handleScroll = () => {
+      if (window.innerWidth < 768) {
+        setShowScrollTop(window.scrollY > 300);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -339,13 +357,13 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white relative py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white relative">
       {/* Logo en arrière-plan */}
       <div 
         className="fixed inset-0 opacity-20 md:opacity-10 pointer-events-none z-0"
         style={{
           backgroundImage: 'url(/images/logoKorfball.jpg)',
-          backgroundSize: isMobile ? '120%' : '70%',
+          backgroundSize: '85%',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center center',
           top: 0,
@@ -354,68 +372,63 @@ export default function AdminPage() {
           bottom: 0,
         }}
       />
-      {/* Contenu par-dessus */}
-      <div className="relative z-10">
-        <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Administration</h1>
+      
+      {/* Header fixe avec titre et tabs */}
+      <div className="fixed top-16 left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl font-bold text-gray-900 pt-4 pb-2">Administration</h1>
 
-        {/* Tabs */}
-        <div className="mb-6 border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
-            <button
-              onClick={() => setActiveTab('licences')}
-              className={`${
-                activeTab === 'licences'
-                  ? 'border-indigo-500 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-            >
-              Licences
-            </button>
-            <button
-              onClick={() => setActiveTab('saisons')}
-              className={`${
-                activeTab === 'saisons'
-                  ? 'border-indigo-500 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-            >
-              Saisons
-            </button>
-            <button
-              onClick={() => setActiveTab('clubs')}
-              className={`${
-                activeTab === 'clubs'
-                  ? 'border-indigo-500 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-            >
-              Clubs
-            </button>
-          </nav>
+          {/* Tabs */}
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8">
+              <button
+                onClick={() => setActiveTab('licences')}
+                className={`${
+                  activeTab === 'licences'
+                    ? 'border-indigo-500 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              >
+                Licences
+              </button>
+              <button
+                onClick={() => setActiveTab('saisons')}
+                className={`${
+                  activeTab === 'saisons'
+                    ? 'border-indigo-500 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              >
+                Saisons
+              </button>
+              <button
+                onClick={() => setActiveTab('clubs')}
+                className={`${
+                  activeTab === 'clubs'
+                    ? 'border-indigo-500 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              >
+                Clubs
+              </button>
+            </nav>
+          </div>
         </div>
+      </div>
 
-        {error && (
-          <div className="mb-6">
-            <Alert type="error">{error}</Alert>
-          </div>
-        )}
+      {/* Contenu scrollable */}
+      <div className="relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pt-[184px]">
 
-        {success && (
-          <div className="mb-6">
-            <Alert type="success">{success}</Alert>
-          </div>
-        )}
-
-        {/* Licences Tab */}
-        {activeTab === 'licences' && (
-          <div className="space-y-6">
-            <Card title="Demandes de licences">
-              <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Sélecteurs pour l'onglet Licences */}
+          {activeTab === 'licences' && (
+            <div className="mb-6 bg-white border border-gray-200 rounded-lg shadow-sm p-3 md:p-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4">
                 <Select
                   label="Filtrer par statut"
                   value={filterStatut}
                   onChange={(e) => setFilterStatut(e.target.value as any)}
+                  showPlaceholder={false}
                   options={[
                     { value: 'TOUS', label: 'Toutes les licences' },
                     { value: 'SOUMISE', label: 'En attente (SOUMISE)' },
@@ -429,6 +442,7 @@ export default function AdminPage() {
                   label="Filtrer par saison"
                   value={filterSaison}
                   onChange={(e) => setFilterSaison(e.target.value)}
+                  showPlaceholder={false}
                   options={[
                     { value: 'EN_COURS', label: '📅 Saison en cours' },
                     { value: 'ARCHIVES', label: '📦 Archives (saisons passées)' },
@@ -439,7 +453,38 @@ export default function AdminPage() {
                     })),
                   ]}
                 />
+
+                <Select
+                  label="Filtrer par type"
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value as any)}
+                  showPlaceholder={false}
+                  options={[
+                    { value: 'TOUS', label: 'Tous (Arbitres & Joueurs)' },
+                    { value: 'ARBITRE', label: '⚖️ Arbitres' },
+                    { value: 'JOUEUR', label: '⚽ Joueurs' },
+                  ]}
+                />
               </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="mb-6">
+              <Alert type="error">{error}</Alert>
+            </div>
+          )}
+
+          {success && (
+            <div className="mb-6">
+              <Alert type="success">{success}</Alert>
+            </div>
+          )}
+
+          {/* Licences Tab */}
+          {activeTab === 'licences' && (
+            <div className="space-y-6">
+              <Card title="Demandes de licences">
 
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-12 space-y-4">
@@ -461,7 +506,21 @@ export default function AdminPage() {
                     </div>
                   )}
                   <div className={`space-y-4 ${filterSaison === 'ARCHIVES' ? 'opacity-90' : ''}`}>
-                  {licences.map((licence) => (
+                  {licences
+                    .filter((licence) => {
+                      // Filtrer par type (Arbitre/Joueur)
+                      if (filterType === 'TOUS') return true;
+                      const isArbitre = !licence.joueur.lieuNaissance || licence.joueur.lieuNaissance.trim() === '';
+                      if (filterType === 'ARBITRE') return isArbitre;
+                      if (filterType === 'JOUEUR') return !isArbitre;
+                      return true;
+                    })
+                    .map((licence) => {
+                    // Déterminer si c'est un arbitre ou un joueur
+                    // Si lieuNaissance est vide, c'est un arbitre
+                    const isArbitre = !licence.joueur.lieuNaissance || licence.joueur.lieuNaissance.trim() === '';
+
+                    return (
                     <div
                       key={licence.id}
                       className={`border rounded-lg bg-white ${
@@ -474,6 +533,16 @@ export default function AdminPage() {
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">
                             {licence.joueur.prenom} {licence.joueur.nom}
+                            {isArbitre && (
+                              <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                Arbitre
+                              </span>
+                            )}
+                            {!isArbitre && (
+                              <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                Joueur
+                              </span>
+                            )}
                           </h3>
                           <p className="text-sm text-gray-500">
                             {licence.type === 'NOUVEAU' ? 'Nouvelle licence' : 'Renouvellement'} -{' '}
@@ -498,154 +567,55 @@ export default function AdminPage() {
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-700 mb-2">
-                            Informations du joueur
-                          </h4>
-                          <dl className="space-y-1 text-sm">
-                            <div className="flex">
-                              <dt className="text-gray-500 w-32">Date de naissance:</dt>
-                              <dd className="text-gray-900">
-                                {formatDate(licence.joueur.dateNaissance)}
-                              </dd>
-                            </div>
-                            {licence.joueur.lieuNaissance && (
+                        <div className="space-y-4">
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">
+                              Informations {isArbitre ? "de l'arbitre" : "du joueur"}
+                            </h4>
+                            <dl className="space-y-1 text-sm">
                               <div className="flex">
-                                <dt className="text-gray-500 w-32">Lieu de naissance:</dt>
-                                <dd className="text-gray-900">{licence.joueur.lieuNaissance}</dd>
-                              </div>
-                            )}
-                            {licence.joueur.nationalite && (
-                              <div className="flex">
-                                <dt className="text-gray-500 w-32">Nationalité:</dt>
-                                <dd className="text-gray-900">{licence.joueur.nationalite}</dd>
-                              </div>
-                            )}
-                            {licence.joueur.email && (
-                              <div className="flex">
-                                <dt className="text-gray-500 w-32">Email:</dt>
-                                <dd className="text-gray-900">{licence.joueur.email}</dd>
-                              </div>
-                            )}
-                            {licence.joueur.telephone && (
-                              <div className="flex">
-                                <dt className="text-gray-500 w-32">Téléphone:</dt>
-                                <dd className="text-gray-900">{licence.joueur.telephone}</dd>
-                              </div>
-                            )}
-                            {licence.joueur.numeroLicence && (
-                              <div className="flex">
-                                <dt className="text-gray-500 w-32">N° Licence:</dt>
-                                <dd className="text-gray-900 font-semibold">
-                                  {licence.joueur.numeroLicence}
-                                </dd>
-                              </div>
-                            )}
-                          </dl>
-                        </div>
-
-                        {/* Documents - Affichage en grille compacte */}
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-700 mb-2">
-                            Documents
-                          </h4>
-                          {(licence.joueur.photo || licence.joueur.signature || licence.joueur.pieceIdentite || licence.joueur.certificatMedical) ? (
-                            <div className="grid grid-cols-2 gap-3">
-                              {licence.joueur.photo && (
-                                <div>
-                                  <p className="text-xs text-gray-500 mb-1">Photo:</p>
-                                  <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-300 transition-colors">
-                                    <img
-                                      src={licence.joueur.photo}
-                                      alt={`Photo de ${licence.joueur.prenom} ${licence.joueur.nom}`}
-                                      className="w-full h-32 object-cover"
-                                      onClick={() => window.open(licence.joueur.photo!, '_blank')}
-                                      title="Cliquer pour agrandir"
-                                    />
-                                  </div>
-                                </div>
-                              )}
-                              {licence.joueur.signature && (
-                                <div>
-                                  <p className="text-xs text-gray-500 mb-1">Signature:</p>
-                                  <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-300 transition-colors">
-                                    <img
-                                      src={licence.joueur.signature}
-                                      alt={`Signature de ${licence.joueur.prenom} ${licence.joueur.nom}`}
-                                      className="w-full h-32 object-cover"
-                                      onClick={() => window.open(licence.joueur.signature!, '_blank')}
-                                      title="Cliquer pour agrandir"
-                                    />
-                                  </div>
-                                </div>
-                              )}
-                              {licence.joueur.pieceIdentite && (
-                                <div>
-                                  <p className="text-xs text-gray-500 mb-1">Pièce d'identité:</p>
-                                  <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-300 transition-colors">
-                                    <img
-                                      src={licence.joueur.pieceIdentite}
-                                      alt={`Pièce d'identité de ${licence.joueur.prenom} ${licence.joueur.nom}`}
-                                      className="w-full h-32 object-cover"
-                                      onClick={() => window.open(licence.joueur.pieceIdentite!, '_blank')}
-                                      title="Cliquer pour agrandir"
-                                    />
-                                  </div>
-                                </div>
-                              )}
-                              {licence.joueur.certificatMedical && (
-                                <div>
-                                  <p className="text-xs text-gray-500 mb-1">Certificat médical:</p>
-                                  <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-300 transition-colors">
-                                    <img
-                                      src={licence.joueur.certificatMedical}
-                                      alt={`Certificat médical de ${licence.joueur.prenom} ${licence.joueur.nom}`}
-                                      className="w-full h-32 object-cover"
-                                      onClick={() => window.open(licence.joueur.certificatMedical!, '_blank')}
-                                      title="Cliquer pour agrandir"
-                                    />
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            <p className="text-xs text-gray-400 italic">
-                              Aucun document fourni
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                        </div>
-
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-700 mb-2">Clubs</h4>
-                          <dl className="space-y-1 text-sm">
-                            {licence.clubActuel && (
-                              <div>
-                                <dt className="text-gray-500">Club actuel:</dt>
-                                <dd className="text-gray-900 font-medium">
-                                  {licence.clubActuel.nom}
-                                  {licence.clubActuel.ville && ` - ${licence.clubActuel.ville}`}
-                                </dd>
-                              </div>
-                            )}
-                            {licence.clubPrecedent && (
-                              <div>
-                                <dt className="text-gray-500">Club précédent:</dt>
+                                <dt className="text-gray-500 w-32">Date de naissance:</dt>
                                 <dd className="text-gray-900">
-                                  {licence.clubPrecedent.nom}
-                                  {licence.clubPrecedent.ville &&
-                                    ` - ${licence.clubPrecedent.ville}`}
+                                  {formatDate(licence.joueur.dateNaissance)}
                                 </dd>
                               </div>
-                            )}
-                          </dl>
+                              {licence.joueur.lieuNaissance && (
+                                <div className="flex">
+                                  <dt className="text-gray-500 w-32">Lieu de naissance:</dt>
+                                  <dd className="text-gray-900">{licence.joueur.lieuNaissance}</dd>
+                                </div>
+                              )}
+                              {licence.joueur.nationalite && (
+                                <div className="flex">
+                                  <dt className="text-gray-500 w-32">Nationalité:</dt>
+                                  <dd className="text-gray-900">{licence.joueur.nationalite}</dd>
+                                </div>
+                              )}
+                              {licence.joueur.email && (
+                                <div className="flex">
+                                  <dt className="text-gray-500 w-32">Email:</dt>
+                                  <dd className="text-gray-900">{licence.joueur.email}</dd>
+                                </div>
+                              )}
+                              {licence.joueur.telephone && (
+                                <div className="flex">
+                                  <dt className="text-gray-500 w-32">Téléphone:</dt>
+                                  <dd className="text-gray-900">{licence.joueur.telephone}</dd>
+                                </div>
+                              )}
+                              {licence.joueur.numeroLicence && (
+                                <div className="flex">
+                                  <dt className="text-gray-500 w-32">N° Licence:</dt>
+                                  <dd className="text-gray-900 font-semibold">
+                                    {licence.joueur.numeroLicence}
+                                  </dd>
+                                </div>
+                              )}
+                            </dl>
+                          </div>
 
                           {licence.joueur.responsables.length > 0 && (
-                            <div className="mt-4">
+                            <div>
                               <h4 className="text-sm font-medium text-gray-700 mb-2">
                                 Responsables
                               </h4>
@@ -659,6 +629,116 @@ export default function AdminPage() {
                               </ul>
                             </div>
                           )}
+                        </div>
+
+                        <div className="space-y-4">
+                          {/* Documents - Affichage en grille compacte */}
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">
+                              Documents
+                            </h4>
+                            {(licence.joueur.photo || licence.joueur.signature || licence.joueur.pieceIdentite || licence.joueur.certificatMedical) ? (
+                              <div className="grid grid-cols-2 gap-3">
+                                {licence.joueur.photo && (
+                                  <div>
+                                    <p className="text-xs text-gray-500 mb-1">Photo:</p>
+                                    <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-300 transition-colors">
+                                      <img
+                                        src={licence.joueur.photo}
+                                        alt={`Photo de ${licence.joueur.prenom} ${licence.joueur.nom}`}
+                                        className="w-full h-32 object-contain"
+                                        onClick={() => {
+                                          setSelectedImage(licence.joueur.photo!);
+                                          setSelectedImageTitle(`Photo de ${licence.joueur.prenom} ${licence.joueur.nom}`);
+                                        }}
+                                        title="Cliquer pour agrandir"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                                {licence.joueur.signature && (
+                                  <div>
+                                    <p className="text-xs text-gray-500 mb-1">Signature:</p>
+                                    <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-300 transition-colors">
+                                      <img
+                                        src={licence.joueur.signature}
+                                        alt={`Signature de ${licence.joueur.prenom} ${licence.joueur.nom}`}
+                                        className="w-full h-32 object-contain"
+                                        onClick={() => {
+                                          setSelectedImage(licence.joueur.signature!);
+                                          setSelectedImageTitle(`Signature de ${licence.joueur.prenom} ${licence.joueur.nom}`);
+                                        }}
+                                        title="Cliquer pour agrandir"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                                {licence.joueur.pieceIdentite && (
+                                  <div>
+                                    <p className="text-xs text-gray-500 mb-1">Pièce d'identité:</p>
+                                    <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-300 transition-colors">
+                                      <img
+                                        src={licence.joueur.pieceIdentite}
+                                        alt={`Pièce d'identité de ${licence.joueur.prenom} ${licence.joueur.nom}`}
+                                        className="w-full h-32 object-contain"
+                                        onClick={() => {
+                                          setSelectedImage(licence.joueur.pieceIdentite!);
+                                          setSelectedImageTitle(`Pièce d'identité de ${licence.joueur.prenom} ${licence.joueur.nom}`);
+                                        }}
+                                        title="Cliquer pour agrandir"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                                {licence.joueur.certificatMedical && (
+                                  <div>
+                                    <p className="text-xs text-gray-500 mb-1">Certificat médical:</p>
+                                    <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-300 transition-colors">
+                                      <img
+                                        src={licence.joueur.certificatMedical}
+                                        alt={`Certificat médical de ${licence.joueur.prenom} ${licence.joueur.nom}`}
+                                        className="w-full h-32 object-contain"
+                                        onClick={() => {
+                                          setSelectedImage(licence.joueur.certificatMedical!);
+                                          setSelectedImageTitle(`Certificat médical de ${licence.joueur.prenom} ${licence.joueur.nom}`);
+                                        }}
+                                        title="Cliquer pour agrandir"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <p className="text-xs text-gray-400 italic">
+                                Aucun document fourni
+                              </p>
+                            )}
+                          </div>
+
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">Clubs</h4>
+                            <dl className="space-y-1 text-sm">
+                              {licence.clubActuel && (
+                                <div>
+                                  <dt className="text-gray-500">Club actuel:</dt>
+                                  <dd className="text-gray-900 font-medium">
+                                    {licence.clubActuel.nom}
+                                    {licence.clubActuel.ville && ` - ${licence.clubActuel.ville}`}
+                                  </dd>
+                                </div>
+                              )}
+                              {licence.clubPrecedent && (
+                                <div>
+                                  <dt className="text-gray-500">Club précédent:</dt>
+                                  <dd className="text-gray-900">
+                                    {licence.clubPrecedent.nom}
+                                    {licence.clubPrecedent.ville &&
+                                      ` - ${licence.clubPrecedent.ville}`}
+                                  </dd>
+                                </div>
+                              )}
+                            </dl>
+                          </div>
                         </div>
                       </div>
 
@@ -749,7 +829,8 @@ export default function AdminPage() {
                         Demandée le {formatDateTime(licence.createdAt)}
                       </p>
                     </div>
-                  ))}
+                    );
+                  })}
                   </div>
                 </>
               )}
@@ -981,6 +1062,29 @@ export default function AdminPage() {
         </div>
       </div>
 
+      {/* Bouton scroll to top (mobile uniquement) */}
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-6 right-6 z-50 md:hidden bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110"
+          aria-label="Remonter en haut"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 10l7-7m0 0l7 7m-7-7v18"
+            />
+          </svg>
+        </button>
+      )}
+
       {/* Modal de validation */}
       {showValidateModal && selectedLicence && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -1101,6 +1205,53 @@ export default function AdminPage() {
               >
                 Annuler
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal d'image */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50"
+          onClick={() => {
+            setSelectedImage(null);
+            setSelectedImageTitle('');
+          }}
+        >
+          <div className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center p-4">
+            <button
+              onClick={() => {
+                setSelectedImage(null);
+                setSelectedImageTitle('');
+              }}
+              className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10 bg-black bg-opacity-50 rounded-full p-2"
+              aria-label="Fermer"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <div className="text-center">
+              {selectedImageTitle && (
+                <h3 className="text-white text-lg font-medium mb-4">{selectedImageTitle}</h3>
+              )}
+              <img
+                src={selectedImage}
+                alt={selectedImageTitle}
+                className="max-w-full max-h-[80vh] object-contain mx-auto"
+                onClick={(e) => e.stopPropagation()}
+              />
             </div>
           </div>
         </div>
