@@ -235,7 +235,7 @@ export type JoueurGroupByOutputType = {
   _max: JoueurMaxAggregateOutputType | null
 }
 
-type GetJoueurGroupByPayload<T extends JoueurGroupByArgs> = Prisma.PrismaPromise<
+export type GetJoueurGroupByPayload<T extends JoueurGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<JoueurGroupByOutputType, T['by']> &
       {
@@ -1574,6 +1574,11 @@ export type JoueurFindManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Skip the first `n` Joueurs.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Joueurs.
+   */
   distinct?: Prisma.JoueurScalarFieldEnum | Prisma.JoueurScalarFieldEnum[]
 }
 

@@ -158,7 +158,7 @@ export type ClubGroupByOutputType = {
   _max: ClubMaxAggregateOutputType | null
 }
 
-type GetClubGroupByPayload<T extends ClubGroupByArgs> = Prisma.PrismaPromise<
+export type GetClubGroupByPayload<T extends ClubGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ClubGroupByOutputType, T['by']> &
       {
@@ -1182,6 +1182,11 @@ export type ClubFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Skip the first `n` Clubs.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Clubs.
+   */
   distinct?: Prisma.ClubScalarFieldEnum | Prisma.ClubScalarFieldEnum[]
 }
 

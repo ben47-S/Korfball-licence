@@ -172,7 +172,7 @@ export type ResponsableGroupByOutputType = {
   _max: ResponsableMaxAggregateOutputType | null
 }
 
-type GetResponsableGroupByPayload<T extends ResponsableGroupByArgs> = Prisma.PrismaPromise<
+export type GetResponsableGroupByPayload<T extends ResponsableGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ResponsableGroupByOutputType, T['by']> &
       {
@@ -1196,6 +1196,11 @@ export type ResponsableFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Skip the first `n` Responsables.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Responsables.
+   */
   distinct?: Prisma.ResponsableScalarFieldEnum | Prisma.ResponsableScalarFieldEnum[]
 }
 
