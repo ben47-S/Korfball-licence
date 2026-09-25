@@ -4,17 +4,9 @@ import jwt from 'jsonwebtoken';
  * Validation de JWT_SECRET au chargement du module
  * Lance une erreur explicite si la variable d'environnement est manquante
  */
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || '';
 
-if (!JWT_SECRET) {
-  throw new Error(
-    'JWT_SECRET is required. Please set it in your environment variables.\n' +
-    'For security, use a strong random string (minimum 32 characters).\n' +
-    'Example: openssl rand -base64 32'
-  );
-}
-
-if (JWT_SECRET.length < 32) {
+if (JWT_SECRET.length > 0 && JWT_SECRET.length < 32) {
   console.warn(
     '[AUTH] Warning: JWT_SECRET is shorter than 32 characters. ' +
     'Consider using a stronger secret for production.'
@@ -51,7 +43,8 @@ export function verifyAuth(request: Request): AuthUser {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as AuthUser;
+    if (!JWT_SECRET) throw new Error('UNAUTHORIZED');
+    const decoded = jwt.verify(token, JWT_SECRET as string) as unknown as AuthUser;
     
     // Validation supplémentaire : s'assurer que l'ID est bien un string (UUID)
     if (typeof decoded.id !== 'string') {

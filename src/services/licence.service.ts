@@ -12,6 +12,7 @@ export class LicenceService {
         data: {
           nom: data.joueur.nom,
           prenom: data.joueur.prenom,
+          telephone: data.joueur.telephone,
           dateNaissance: new Date(data.joueur.dateNaissance),
           lieuNaissance: data.joueur.lieuNaissance,
           nationalite: data.joueur.nationalite,

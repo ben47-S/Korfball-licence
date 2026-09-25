@@ -82,9 +82,7 @@ const arbitreInscriptionSchema = z.object({
 // Schema principal d'inscription arbitre
 export const inscriptionArbitreSchema = z.object({
   // Type de licence
-  type: z.nativeEnum(TypeLicence, {
-    errorMap: () => ({ message: 'Type de licence invalide (NOUVEAU ou RENOUVELLEMENT)' }),
-  }),
+  type: z.nativeEnum(TypeLicence),
 
   // Saison obligatoire
   saisonId: z.string().uuid('ID de saison invalide'),

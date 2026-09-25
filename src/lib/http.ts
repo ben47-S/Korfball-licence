@@ -20,7 +20,7 @@ export function handleApiError(error: unknown) {
   if (error && typeof error === 'object' && 'code' in error) {
     // P2002: Unique constraint violation
     if (error.code === 'P2002') {
-      const meta = error.meta as { target?: string[] } | undefined;
+      const meta = (error as { meta?: { target?: string[] } }).meta;
       if (meta?.target?.includes('joueurId') && meta?.target?.includes('saisonId')) {
         return NextResponse.json(
           { message: 'Une licence existe déjà pour ce joueur pour cette saison' },

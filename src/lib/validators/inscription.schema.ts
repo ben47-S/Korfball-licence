@@ -36,9 +36,7 @@ const joueurInscriptionSchema = z.object({
   }, 'Date de naissance invalide'),
   lieuNaissance: z.string().min(1, 'Le lieu de naissance est requis'),
   nationalite: z.string().min(2, 'La nationalité est requise (minimum 2 caractères)'),
-  sexe: z.enum(['M', 'F', 'Autre'], {
-    errorMap: () => ({ message: 'Le sexe est requis (M, F ou Autre)' }),
-  }),
+  sexe: z.enum(['M', 'F', 'Autre']),
   photo: z.string()
     .refine((val) => !val || val === '' || val.startsWith('data:image/') || val.startsWith('http'), {
       message: 'La photo doit être une image en base64 (data:image/...) ou une URL valide',
@@ -77,9 +75,7 @@ const responsableInscriptionSchema = z.object({
 // Schema principal d'inscription
 export const inscriptionLicenceSchema = z.object({
   // Type de licence
-  type: z.nativeEnum(TypeLicence, {
-    errorMap: () => ({ message: 'Type de licence invalide (NOUVEAU ou RENOUVELLEMENT)' }),
-  }),
+  type: z.nativeEnum(TypeLicence),
 
   // Saison obligatoire
   saisonId: z.string().uuid('ID de saison invalide'),

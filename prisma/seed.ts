@@ -61,6 +61,7 @@ async function main() {
     data: {
       nom: "Kouassi",
       prenom: "Jean",
+      telephone: "+2250102030405",
       dateNaissance: new Date("2010-05-15"),
       lieuNaissance: "Bouaké",
       nationalite: "Ivoirienne",
@@ -70,6 +71,7 @@ async function main() {
         create: {
           nom: "Kouassi",
           prenom: "Marc",
+          telephone: "+2250102030406",
           lien: LienResponsable.PERE,
         },
       },

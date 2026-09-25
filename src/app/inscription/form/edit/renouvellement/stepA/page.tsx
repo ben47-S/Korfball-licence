@@ -30,6 +30,16 @@ interface LicencePrecedente {
     sexe: string | null;
     photo: string | null;
     signature: string | null;
+    pieceIdentite: string | null;
+    certificatMedical: string | null;
+    responsables: Array<{
+      id: string;
+      nom: string;
+      prenom: string;
+      telephone: string | null;
+      email: string | null;
+      lien: string;
+    }>;
   };
   saison: {
     id: string;
@@ -45,14 +55,6 @@ interface LicencePrecedente {
     nom: string;
     ville: string | null;
   } | null;
-  responsables: Array<{
-    id: string;
-    nom: string;
-    prenom: string;
-    telephone: string | null;
-    email: string | null;
-    lien: string;
-  }>;
 }
 
 export default function RenewStepAPage() {
@@ -260,6 +262,8 @@ export default function RenewStepAPage() {
           sexe: licence.joueur.sexe || '',
           photo: licence.joueur.photo || '',
           signature: licence.joueur.signature || '',
+          pieceIdentite: licence.joueur.pieceIdentite || '',
+          certificatMedical: licence.joueur.certificatMedical || '',
         },
         responsables: (licence.joueur.responsables || []).map((resp) => ({
           nom: resp.nom,

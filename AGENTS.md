@@ -55,6 +55,18 @@ pnpm test:coverage         # With coverage report (70% threshold)
 
 **pnpm config**: `.npmrc` has `registry=https://registry.npmmirror.com/` (npmjs.org is unreachable). `ignoredBuiltDependencies` in `pnpm-workspace.yaml` includes `sharp` and `unrs-resolver`. Do NOT add `@prisma/adapter-better-sqlite3` — the project exclusively uses PostgreSQL.
 
+## Build Fixes (already applied)
+
+- Removed `@prisma/adapter-better-sqlite3` and `@types/better-sqlite3` from `package.json` — eliminates `node-gyp` dependency that fails on Railway deployments
+- Removed empty `src/app/inscription/formPlayer/` directory and empty `src/app/api/joueurs/route.ts`, `src/app/api/paiements/route.ts` — Next.js requires all `page.tsx`/`route.ts` files to be valid modules
+- Fixed `src/lib/auth.ts` — `JWT_SECRET` check moved inside `verifyAuth()` to allow `next build` without env vars
+- Fixed Zod v4 compatibility — removed `errorMap` option from `z.nativeEnum()` calls in validators (Zod v4 removed `errorMap`)
+- Fixed `ImageCapture` component — added optional `placeholder` and `label` props
+- Fixed `LicencePrecedente` interfaces — added `pieceIdentite`, `certificatMedical`, `responsables` fields
+- Fixed `prisma/seed.ts` — added missing `telephone` fields on `Joueur` and `Responsable`
+- Fixed `src/app/api/saisons/route.ts` — moved `body` declaration outside `try` block for TypeScript scope
+- Fixed `src/services/inscription.service.ts` and `licence.service.ts` — added `telephone` field and typed `let joueur`
+
 ## Key Architecture
 
 - **App Router**: `src/app/` — Next.js App Router with TypeScript

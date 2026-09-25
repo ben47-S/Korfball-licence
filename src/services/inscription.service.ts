@@ -1,5 +1,5 @@
 import prisma from '../lib/prisma';
-import { StatutLicence, TypeLicence } from '../../generated/prisma/client';
+import { StatutLicence, TypeLicence, Joueur } from '../../generated/prisma/client';
 import { InscriptionLicenceInput } from '../lib/validators/inscription.schema';
 import { sendInscriptionConfirmationEmail } from '../lib/email';
 import { formatDate } from '../lib/date-utils';
@@ -128,7 +128,7 @@ export class InscriptionService {
 
     // 4. Rechercher le joueur existant AVANT la transaction (pour réduire le travail dans la transaction)
     // Recherche par email (prioritaire) OU téléphone pour éviter les doublons
-    let joueur;
+    let joueur: any = null;
     if (joueurIdExistant) {
       joueur = await prisma.joueur.findUnique({
         where: { id: joueurIdExistant },

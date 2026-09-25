@@ -228,12 +228,11 @@ export async function GET(req: Request) {
  * @returns Saison créée
  */
 export async function POST(req: Request) {
+  const body = await req.json();
   try {
     // TODO: Ajouter vérification auth admin
     // const user = verifyAuth(req);
     // requireAdmin(user);
-
-    const body = await req.json();
 
     // Validation basique
     if (!body.debut || !body.fin || !body.inscriptionDebut || !body.inscriptionFin) {

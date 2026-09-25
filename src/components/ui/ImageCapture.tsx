@@ -4,9 +4,10 @@ import { useState, useRef } from 'react';
 import Button from './Button';
 
 interface ImageCaptureProps {
-  label: string;
+  label?: string;
   value: string;
   onChange: (base64: string) => void;
+  placeholder?: string;
   required?: boolean;
   maxSizeMB?: number;
   className?: string;
@@ -76,6 +77,7 @@ export default function ImageCapture({
   label,
   value,
   onChange,
+  placeholder,
   required = false,
   maxSizeMB = 5,
   className,
@@ -194,7 +196,7 @@ export default function ImageCapture({
           onClick={() => inputRef.current?.click()}
           disabled={isCompressing}
         >
-          Charger une image
+          {placeholder || 'Charger une image'}
         </Button>
       ) : null}
 
